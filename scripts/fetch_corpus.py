@@ -44,12 +44,25 @@ TAG_RE = re.compile(r"<[^>]+>")
 WS_RE = re.compile(r"\s+")
 SENT_RE = re.compile(r"[.!?]")
 
-SOURCES = [
-    {"name": "imdb", "dataset": "stanfordnlp/imdb", "config": "plain_text",
-     "split": "train", "field": "text", "offsets": [0, 12500], "target": 60},
-    {"name": "yelp", "dataset": "Yelp/yelp_review_full", "config": "yelp_review_full",
-     "split": "train", "field": "text", "offsets": [0, 60000], "target": 60},
-]
+# Human, pre-2022, license-clean sources per register. Only derived statistics
+# are committed; raw texts (corpus/<register>/raw/) are gitignored.
+SOURCES = {
+    # Opinion prose: IMDB (2011) + Yelp (2015) reviews.
+    "spontaneous": [
+        {"name": "imdb", "dataset": "stanfordnlp/imdb", "config": "plain_text",
+         "split": "train", "field": "text", "offsets": [0, 12500], "target": 60},
+        {"name": "yelp", "dataset": "Yelp/yelp_review_full", "config": "yelp_review_full",
+         "split": "train", "field": "text", "offsets": [0, 60000], "target": 60},
+    ],
+    # Scientific prose: PubMed + arXiv paper abstracts (Cohan et al. 2018, pre-LLM).
+    # The 'abstract' field is dense, self-contained scientific writing.
+    "scientific": [
+        {"name": "pubmed", "dataset": "ccdv/pubmed-summarization", "config": "document",
+         "split": "train", "field": "abstract", "offsets": [0, 5000], "target": 60},
+        {"name": "arxiv", "dataset": "ccdv/arxiv-summarization", "config": "document",
+         "split": "train", "field": "abstract", "offsets": [0, 5000], "target": 60},
+    ],
+}
 
 
 def fetch_rows(dataset, config, split, offset, length):
@@ -68,7 +81,11 @@ def clean(text):
     text = html.unescape(text)
     text = TAG_RE.sub(" ", text)
     text = text.replace("\\n", " ").replace("\\'", "'")
-    return WS_RE.sub(" ", text).strip()
+    text = WS_RE.sub(" ", text)
+    # Some research dumps are pre-tokenized ("iran , shiraz . "); re-attach
+    # punctuation so sentence/word stats are not skewed by the spacing.
+    text = re.sub(r"\s+([.,;:!?])", r"\1", text)
+    return text.strip()
 
 
 def usable(text, min_chars, max_chars, min_sents):
@@ -88,9 +105,15 @@ def main(argv=None):
     raw_dir = root / "corpus" / args.register / "raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
 
+    srcs = SOURCES.get(args.register)
+    if not srcs:
+        print(f"no sources defined for register '{args.register}' "
+              f"(have: {', '.join(SOURCES)})", file=sys.stderr)
+        return 1
+
     seen = set()
     total = 0
-    for src in SOURCES:
+    for src in srcs:
         kept = 0
         try:
             for off in src["offsets"]:
