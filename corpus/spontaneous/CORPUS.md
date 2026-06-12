@@ -6,15 +6,22 @@ the corpus is the single biggest lever on calibration accuracy.
 
 ## What to put here
 
-Drop plain UTF-8 `.txt` files (one text each) into `corpus/spontaneous/`, then run:
+The shipped `reference-stats.json` is already calibrated from a real human corpus
+(see `PROVENANCE.md`). To rebuild or extend it:
 
 ```bash
+# Option A: fetch the default human corpus (IMDB + Yelp reviews, pre-2022):
+python3 scripts/fetch_corpus.py              # -> corpus/spontaneous/raw/ (gitignored)
+python3 scripts/build_reference.py --register spontaneous
+
+# Option B: add your own. Drop plain UTF-8 *.txt anywhere under this folder
+# (raw/ is fine), then rebuild:
 python3 scripts/build_reference.py --register spontaneous
 ```
 
-This overwrites `reference-stats.json` with bands measured from your texts
-(`calibrated: true`). Until then, the shipped file holds heuristic defaults
-(`calibrated: false`) — usable, but not measured.
+`build_reference.py` reads every `*.txt` under `corpus/spontaneous/` (recursively)
+and writes bands measured from them (`calibrated: true`). The repo ships only the
+statistics, never the raw corpus texts.
 
 ## Sourcing rules
 

@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 *.egg-info/
+
+# Raw reference corpus: licensed / not ours to redistribute. Reproducible via
+# scripts/fetch_corpus.py. Only the derived reference-stats.json is committed.
+corpus/*/raw/

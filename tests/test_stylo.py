@@ -4,6 +4,30 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / "scripts"))
 import stylo  # noqa: E402
 
+# Fixed band fixture for LOGIC tests, so they don't depend on the live, frequently
+# recalibrated corpus/spontaneous/reference-stats.json. (The live file is exercised
+# by test_score_discriminates_ai_from_human, which passes no ref.) These bands keep
+# nonzero floors on em_dash/contraction so the over-correction logic is testable
+# regardless of whether the current corpus happens to use those features.
+TEST_REF = {
+    "register": "test", "calibrated": False,
+    "bands": {
+        "sentence_length_mean": {"floor": 9, "ceiling": 24},
+        "sentence_length_cv": {"floor": 0.45, "ceiling": 1.05},
+        "mtld": {"floor": 45, "ceiling": 130},
+        "ttr": {"floor": 0.40, "ceiling": 0.95},
+        "hapax_ratio": {"floor": 0.30, "ceiling": 0.95},
+        "em_dash_rate": {"floor": 0.05, "ceiling": 1.5},
+        "comma_rate": {"floor": 3.5, "ceiling": 12},
+        "contraction_rate": {"floor": 0.8, "ceiling": 6},
+        "rule_of_three": {"floor": 0, "ceiling": 2},
+        "exclaim": {"floor": 0, "ceiling": 2},
+        "bold": {"floor": 0, "ceiling": 1},
+        "emoji": {"floor": 0, "ceiling": 1},
+    },
+    "function_word_vector": {},
+}
+
 
 # --- Task 2: segmentation + structural metrics ---
 
@@ -104,18 +128,18 @@ def test_score_output_shape():
 def test_score_flags_over_correction():
     # Flat rhythm + zero em dashes = over-corrected, should self-tell-flag.
     flat = "I went there. I saw it. I left then. It was fine. Nothing else."
-    out = stylo.score(flat, "spontaneous")
+    out = stylo.score(flat, "spontaneous", ref=TEST_REF)
     assert "sentence_length_cv" in out["self_tell_flags"]
     assert "em_dash_rate" in out["self_tell_flags"]
 
 
 def test_score_human_like_not_outlier():
-    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous")
+    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous", ref=TEST_REF)
     assert out["stylo_outlier"] is False
 
 
 def test_score_feature_status_values():
-    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous")
+    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous", ref=TEST_REF)
     for feat in out["features"].values():
         assert feat["status"] in ("below", "in", "above")
         assert "floor" in feat and "ceiling" in feat and "z" in feat
@@ -169,8 +193,8 @@ REGISTER_TRUE = (
 
 
 def test_overcorrection_penalized_in_distance():
-    scrubbed = stylo.score(SCRUBBED, "spontaneous")
-    faithful = stylo.score(REGISTER_TRUE, "spontaneous")
+    scrubbed = stylo.score(SCRUBBED, "spontaneous", ref=TEST_REF)
+    faithful = stylo.score(REGISTER_TRUE, "spontaneous", ref=TEST_REF)
     # Both are tell-free, but the scrubbed one is more over-corrected...
     assert sum(scrubbed["tells"].values()) == 0
     assert len(scrubbed["self_tell_flags"]) > len(faithful["self_tell_flags"])

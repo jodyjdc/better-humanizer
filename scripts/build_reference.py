@@ -50,7 +50,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     reg_dir = pathlib.Path(args.corpus_root) / args.register
-    files = sorted(reg_dir.glob("*.txt"))
+    files = sorted(reg_dir.rglob("*.txt"))  # includes raw/ subdir of fetched texts
     out_path = (
         pathlib.Path(args.out)
         if args.out
