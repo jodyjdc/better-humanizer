@@ -1,0 +1,116 @@
+---
+name: humanizer-pro
+version: 0.1.0
+description: |
+  Measured, self-improving rewriter. Generates several candidate rewrites,
+  scores each with a hybrid scorer (std-lib stylometrics + an LLM judge panel)
+  against the real human distribution for a register, applies vetoes, keeps the
+  best, and iterates on the judges' critique. Targets the human band (floor AND
+  ceiling) so it never over-corrects into a machine-laundered tell. v1 register:
+  spontaneous. Explicit non-goal: defeating commercial AI detectors.
+license: MIT
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - AskUserQuestion
+---
+
+# humanizer-pro
+
+Rewrite AI-sounding text into prose that sits inside the human distribution for
+its register, and **prove** it with a score instead of trusting vibes. This is the
+measured successor to the original `humanizer` skill: same pattern knowledge (now
+in `lexicons/ai_tells.json`), plus measurement, register awareness, and
+anti-over-correction.
+
+## Inputs
+
+- `text`: the passage to humanize (the SOURCE).
+- `register`: default `spontaneous`. Selects `registers/<register>.md` (the brief)
+  and `corpus/<register>/reference-stats.json` (the numeric bands).
+- optional `voice sample`: the user's own writing. If given, run
+  `scripts/build_reference.py` on it first so the human target becomes *them*.
+
+## The loop
+
+### 1. Generate K = 3 candidate rewrites
+
+Read `registers/<register>.md` and follow it. Produce three candidates with
+**distinct strategies** so the scorer has real variety to choose from:
+
+- **A — minimal:** fix only the clear tells from `lexicons/ai_tells.json`, touch
+  nothing else.
+- **B — voice:** rework rhythm and add a point of view; vary sentence length hard;
+  let one em dash or one triad stand if natural.
+- **C — restructure:** rebuild paragraphs, reorder, cut padding, keep every fact.
+
+Every candidate MUST preserve all source meaning (the meaning judge enforces it).
+
+### 2. Score each candidate
+
+For each candidate, gather two scorecards:
+
+- **Stylometric** (objective): run the scorer over the candidate.
+  ```bash
+  python3 scripts/stylo.py <candidate-file> --register <register>
+  ```
+  Read back `stylo_distance`, `self_tell_flags`, `stylo_outlier`, `features`.
+- **Judge panel** (semantic): evaluate the candidate with all three lenses, filling
+  the templates in `judges/`:
+  - `judges/detector.md` -> `p_ai`, `tells`, `critique`
+  - `judges/register.md` -> `register_fit`, `breaks`, `critique`
+  - `judges/meaning.md` (needs SOURCE + candidate) -> `fidelity`, `dropped`, ...
+
+### 3. Composite + vetoes
+
+```
+judge_score = mean(100 - p_ai, register_fit, fidelity)
+composite   = 0.65 * judge_score
+            + 0.35 * (100 * (1 - min(stylo_distance, 1)))
+            - 5 * len(self_tell_flags)        # over-correction penalty
+```
+
+**Hard vetoes** (candidate is disqualified regardless of composite):
+- `fidelity < 70` — it changed or dropped meaning.
+- `stylo_outlier == true` — a feature is wildly outside the human band.
+
+### 4. Select + iterate (k = 2)
+
+Pick the highest composite among non-vetoed candidates. If the best `composite < 85`
+and fewer than `k = 2` iterations have run: take that candidate, concatenate the
+`critique` lists from all three judges, and do one **targeted** rewrite that fixes
+exactly those points (without introducing new tells or over-correcting). Re-score.
+Stop when `composite >= 85` or `k` is hit.
+
+### 5. Output
+
+Return:
+1. The final rewrite.
+2. A compact **scorecard**: `composite`, `judge_score` breakdown
+   (`p_ai`/`register_fit`/`fidelity`), `stylo_distance`, tells removed vs. source,
+   `self_tell_flags` avoided, iterations used.
+
+Do **not** run a "delete every em dash" post-pass. Over-correction is a tell; defer
+to the bands. Trust the scorecard, not a blanket ban.
+
+## Orchestration
+
+When the `Workflow` tool is available, fan out the K candidates and the 3 judges in
+parallel (generate -> score -> select is a clean pipeline). Otherwise run them
+sequentially; the logic is identical. The deterministic work (`stylo.py`) always
+runs as a subprocess so results are reproducible.
+
+## Pattern reference
+
+The tell catalog is `lexicons/ai_tells.json` (33 patterns from Wikipedia's "Signs
+of AI writing", machine-readable). It is the single source of truth, shared by
+`stylo.py` and the judges. Do not re-list patterns inline.
+
+## Scope
+
+v1 is the `spontaneous` register only. Scientific and literary registers reuse this
+exact machinery with their own `registers/<name>.md` + `corpus/<name>/`. The target
+is always the human distribution for the register — never a specific commercial
+detector.
