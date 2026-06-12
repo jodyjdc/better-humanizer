@@ -1,0 +1,21 @@
+{
+  "register": "spontaneous",
+  "calibrated": false,
+  "n_texts": 0,
+  "note": "Heuristic starting bands for English spontaneous/colloquial prose (blog, forum, email, opinion). NOT derived from a measured corpus or any cited study. Overwrite with scripts/build_reference.py once corpus/spontaneous/*.txt is populated. Rates are per 100 tokens unless noted; rule_of_three, bold, emoji are raw counts.",
+  "bands": {
+    "sentence_length_mean": {"floor": 9, "ceiling": 24},
+    "sentence_length_cv": {"floor": 0.45, "ceiling": 1.05},
+    "mtld": {"floor": 45, "ceiling": 130},
+    "ttr": {"floor": 0.40, "ceiling": 0.78},
+    "hapax_ratio": {"floor": 0.35, "ceiling": 0.78},
+    "em_dash_rate": {"floor": 0.05, "ceiling": 1.5},
+    "comma_rate": {"floor": 3.5, "ceiling": 12},
+    "contraction_rate": {"floor": 0.8, "ceiling": 6},
+    "rule_of_three": {"floor": 0, "ceiling": 2},
+    "exclaim": {"floor": 0, "ceiling": 2},
+    "bold": {"floor": 0, "ceiling": 1},
+    "emoji": {"floor": 0, "ceiling": 1}
+  },
+  "function_word_vector": {}
+}

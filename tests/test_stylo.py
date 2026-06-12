@@ -80,3 +80,42 @@ def test_cosine_distance_disjoint_is_one():
     a = {"the": 1.0}
     b = {"of": 1.0}
     assert abs(stylo.cosine_distance(a, b) - 1.0) < 1e-9
+
+
+# --- Task 4: score(), bands, self-tell flags, vetoes ---
+
+SMALL_HUMAN_TEXT = (
+    "I wasn't sure the cafe would still be open. It was. The barista, same guy "
+    "from last winter, just nodded at me like no time had passed. I ordered the "
+    "usual, took the seat by the window, and watched the rain do its thing for a "
+    "good while. Some mornings you really don't need much more than that."
+)
+
+
+def test_score_output_shape():
+    out = stylo.score("Hello there, friend. How are you today?", "spontaneous")
+    expected = {"register", "features", "tells", "self_tell_flags",
+                "stylo_distance", "stylo_outlier"}
+    assert expected <= out.keys()
+    assert out["register"] == "spontaneous"
+    assert out["stylo_distance"] >= 0
+
+
+def test_score_flags_over_correction():
+    # Flat rhythm + zero em dashes = over-corrected, should self-tell-flag.
+    flat = "I went there. I saw it. I left then. It was fine. Nothing else."
+    out = stylo.score(flat, "spontaneous")
+    assert "sentence_length_cv" in out["self_tell_flags"]
+    assert "em_dash_rate" in out["self_tell_flags"]
+
+
+def test_score_human_like_not_outlier():
+    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous")
+    assert out["stylo_outlier"] is False
+
+
+def test_score_feature_status_values():
+    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous")
+    for feat in out["features"].values():
+        assert feat["status"] in ("below", "in", "above")
+        assert "floor" in feat and "ceiling" in feat and "z" in feat

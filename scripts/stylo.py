@@ -236,3 +236,122 @@ def cosine_distance(a, b):
     if na == 0 or nb == 0:
         return 1.0
     return 1 - dot / (na * nb)
+
+
+# --------------------------------------------------------------------------
+# Composite scoring against a register's human band
+# --------------------------------------------------------------------------
+import json  # noqa: E402
+import pathlib  # noqa: E402
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+# Features whose band has a meaningful FLOOR: dropping below it is over-correction
+# (a self-tell), not a win. This is the anti-over-correction core of humanizer-pro.
+OVER_CORRECTION = {"em_dash_rate", "sentence_length_cv", "contraction_rate"}
+
+_LEXICON_CACHE = None
+
+
+def _load_lexicon():
+    global _LEXICON_CACHE
+    if _LEXICON_CACHE is None:
+        _LEXICON_CACHE = json.loads((ROOT / "lexicons/ai_tells.json").read_text())
+    return _LEXICON_CACHE
+
+
+def load_reference(register):
+    """Load the human band set + function-word reference for a register."""
+    path = ROOT / "corpus" / register / "reference-stats.json"
+    return json.loads(path.read_text())
+
+
+def _extract_features(text):
+    b = burstiness(text)
+    lx = lexical(text)
+    p = punctuation_rates(text)
+    s = structural(text)
+    return {
+        "sentence_length_mean": b["mean"],
+        "sentence_length_cv": b["cv"],
+        "mtld": lx["mtld"],
+        "ttr": lx["ttr"],
+        "hapax_ratio": lx["hapax_ratio"],
+        "em_dash_rate": p["em_dash"],
+        "comma_rate": p["comma"],
+        "contraction_rate": contraction_rate(text),
+        "rule_of_three": float(rule_of_three(text)),
+        "exclaim": p["exclaim"],
+        "bold": float(s["bold"]),
+        "emoji": float(s["emoji"]),
+    }
+
+
+def score(text, register="spontaneous", ref=None):
+    """Score text against the human band for a register.
+
+    Returns per-feature status/z, raw tell counts, self-tell flags (over-correction),
+    a composite stylometric distance, and a hard-outlier veto flag.
+    """
+    ref = ref or load_reference(register)
+    bands = ref.get("bands", {})
+    feats = _extract_features(text)
+
+    features = {}
+    self_tells = []
+    zs = []
+    for name, val in feats.items():
+        if name not in bands:
+            continue
+        floor = bands[name]["floor"]
+        ceiling = bands[name]["ceiling"]
+        width = (ceiling - floor) or 1.0
+        if val < floor:
+            status, z = "below", (val - floor) / width
+        elif val > ceiling:
+            status, z = "above", (val - ceiling) / width
+        else:
+            status, z = "in", 0.0
+        features[name] = {
+            "value": round(val, 4),
+            "floor": floor,
+            "ceiling": ceiling,
+            "status": status,
+            "z": round(z, 4),
+        }
+        zs.append(abs(z))
+        if status == "below" and name in OVER_CORRECTION:
+            self_tells.append(name)
+
+    fw_dist = 0.0
+    ref_fw = ref.get("function_word_vector") or {}
+    if ref_fw:
+        fw_dist = cosine_distance(function_word_vector(text), ref_fw)
+
+    stylo_distance = (statistics.fmean(zs) if zs else 0.0) + fw_dist
+    stylo_outlier = any(abs(f["z"]) > 3 for f in features.values())
+
+    return {
+        "register": register,
+        "calibrated": ref.get("calibrated", False),
+        "features": features,
+        "tells": tell_hits(text, _load_lexicon()),
+        "self_tell_flags": self_tells,
+        "stylo_distance": round(stylo_distance, 4),
+        "stylo_outlier": stylo_outlier,
+    }
+
+
+def _main(argv=None):
+    import argparse
+
+    ap = argparse.ArgumentParser(description="Stylometric scorer for humanizer-pro.")
+    ap.add_argument("file", help="path to a UTF-8 text file to score")
+    ap.add_argument("--register", default="spontaneous")
+    args = ap.parse_args(argv)
+    text = pathlib.Path(args.file).read_text(encoding="utf-8")
+    print(json.dumps(score(text, args.register), indent=2, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    _main()
