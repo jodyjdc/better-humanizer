@@ -50,3 +50,32 @@ versions lack, and both preserve the source's core claims.
 - over-correction: pro 0.2 self-tells/sample vs baseline 1.8
 - meaning: preserved in both (no claims dropped or invented)
 - independent blind human-ness vote: pending an out-of-loop model run
+
+## Scientific register (phase 2)
+
+Same machinery, recalibrated on 120 PubMed + arXiv abstracts. The bands invert the
+spontaneous ones (longer and more uniform sentences, zero contractions, ~3x AI-tell
+tolerance), so the tool no longer treats passive voice or formality as a defect.
+
+| sample | base_dist | pro_dist | closer-to-human |
+|--------|-----------|----------|-----------------|
+| 01-ml-health | 0.582 | **0.281** | **pro** |
+| 02-climate | 0.952 | **0.312** | **pro** |
+| 03-crispr | 0.747 | **0.208** | **pro** |
+| 04-quantum | 0.739 | **0.184** | **pro** |
+| **mean** | **0.755** | **0.246** | **pro 4/4** |
+
+baseline = original-style rewrite (tells removed but register-flattened: shorter,
+active, hedges stripped). pro = tells removed while preserving the scientific
+register. Pro wins 4/4.
+
+### Register-awareness (the phase-2 proof)
+
+One scientific passage, scored under both registers:
+
+- under **scientific**: dist 0.332, **0** self-tells (in-band, recognized as human)
+- under **spontaneous**: dist 0.512, **2** self-tells (its uniform rhythm and zero
+  contractions are wrongly flagged as over-correction)
+
+A single-register humanizer would "fix" the paper's passive voice and add
+contractions, damaging it. humanizer-pro adapts to the register instead.

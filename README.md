@@ -16,10 +16,10 @@ pattern knowledge but adds the three things a static checklist can't do.
      rates, tell counts) measured against a human reference band.
    - an LLM **judge panel** (`judges/`) — an adversarial detector lens, a
      register-fidelity lens, and a meaning-fidelity lens.
-2. **Register awareness.** "Human" is register-specific. The bands and brief for
-   the spontaneous register live in `registers/spontaneous.md` +
-   `corpus/spontaneous/reference-stats.json`. Scientific and literary registers
-   reuse the same machinery (phase 2).
+2. **Register awareness.** "Human" is register-specific. Two registers ship today,
+   **spontaneous** and **scientific**, each with its own `registers/<name>.md` +
+   calibrated `corpus/<name>/`. They differ sharply: scientific treats passive
+   voice, hedging, zero contractions, and uniform rhythm as human. Literary is next.
 3. **Anti-over-correction.** Every human band has a floor **and** a ceiling. Zero
    em dashes, flat sentence rhythm, or zero contractions get flagged as
    `self_tell_flags` — because over-laundered prose is its own tell. The original
@@ -46,6 +46,7 @@ python3 scripts/build_reference.py --register spontaneous
 
 # Prove it beats the original (blind A/B):
 python3 eval/run_eval.py --register spontaneous
+python3 eval/run_eval.py --register scientific
 ```
 
 Run the tests (zero dependencies):
@@ -63,10 +64,10 @@ python3 tests/run.py
 | Em dashes / triads | hard-banned | targeted to the human band (floor + ceiling) |
 | Proof it works | trust | blind A/B eval harness |
 
-On the 5-sample eval, against bands calibrated from 120 real human texts,
-humanizer-pro lands closer to the human distribution on **5/5** samples (mean
-distance 0.42 vs 0.72) and is far less over-corrected (0.2 vs 1.8 self-tells per
-sample). See [`eval/REPORT.md`](eval/REPORT.md).
+Against bands calibrated from real human text, humanizer-pro lands closer to the
+human distribution on **5/5** spontaneous samples (mean distance 0.42 vs 0.72, far
+less over-corrected) and **4/4** scientific samples (0.25 vs 0.76) — two registers
+with opposite norms, same machinery. See [`eval/REPORT.md`](eval/REPORT.md).
 
 ## Explicit non-goal
 
