@@ -113,9 +113,11 @@ of AI writing", machine-readable). It is the single source of truth, shared by
 
 ## Scope
 
-Registers available now: **spontaneous** and **scientific**, each with its own
-`registers/<name>.md` + calibrated `corpus/<name>/`. They behave very differently
-(scientific tolerates passive voice, hedging, zero contractions, and ~3x the AI-tell
-vocabulary), which is the whole point: "human" is register-specific. Literary is the
-next register and reuses this exact machinery. The target is always the human
-distribution for the register, never a specific commercial detector.
+Registers available now: **spontaneous**, **scientific**, and **literary**, each
+with its own `registers/<name>.md` + calibrated `corpus/<name>/`. They behave very
+differently and that is the whole point ("human" is register-specific): scientific
+tolerates passive voice, hedging, and zero contractions; literary has ~13x the
+em-dash tolerance of casual prose and the highest rhythm variation, and there the
+main tell is *hollow* figuration, not its presence. Each new register reuses this
+exact machinery. The target is always the human distribution for the register,
+never a specific commercial detector.

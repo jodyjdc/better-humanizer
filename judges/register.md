@@ -14,6 +14,9 @@ What counts as a break depends on the register:
 - **scientific**: forced informality, added contractions, a fake first-person
   voice, choppy rhythm, removed hedging or qualifiers, marketing tone, lost numbers
   or citations.
+- **literary**: flattened rhythm, stripped em dashes and fragments, deleted
+  imagery, killed voice (a police-report rewrite of fiction); or the opposite,
+  hollow purple figuration that means nothing precise.
 
 In every register, penalize **over-correction**: prose pushed to an extreme away
 from the register's human norm reads tampered, not human.

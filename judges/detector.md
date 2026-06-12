@@ -18,11 +18,17 @@ Look for concrete tells:
   of human texture is also a tell.
 
 Judge against the TARGET REGISTER ({{REGISTER}}, see `registers/{{REGISTER}}.md`).
-Register-appropriate formality is NOT a tell: in **scientific** writing, passive
-voice, hedging, nominalization, zero contractions, and long uniform sentences are
-correct and human, not AI. Flag only genuine AI-isms (significance inflation,
-promotional language, delve/tapestry vocabulary, rule-of-three padding, generic
-conclusions) and over-correction away from this register's human norm.
+Register-appropriate features are NOT tells:
+- in **scientific** writing, passive voice, hedging, nominalization, zero
+  contractions, and long uniform sentences are correct and human;
+- in **literary** writing, em dashes, semicolons, fragments, varied rhythm, and
+  *specific* figurative language are craft, not tells. Here the tell is HOLLOW
+  figuration: generic, decorative imagery that means nothing precise ("a tapestry
+  of emotions", "a testament to the sky's sorrow", "the soul is but a mirror").
+
+Flag only genuine AI-isms (significance inflation, promotional language,
+delve/tapestry vocabulary, rule-of-three padding, generic conclusions, hollow
+metaphor) and over-correction away from this register's human norm.
 
 Be specific and skeptical, but calibrated to the register.
 
