@@ -62,6 +62,14 @@ SOURCES = {
         {"name": "arxiv", "dataset": "ccdv/arxiv-summarization", "config": "document",
          "split": "train", "field": "abstract", "offsets": [0, 5000], "target": 60},
     ],
+    # Literary / creative prose: human short fiction from r/WritingPrompts
+    # (Fan et al. 2018, pre-LLM). Narrative voice, figurative language, dialogue,
+    # deliberate rhythm variation. Pulled across the split for stylistic variety.
+    "literary": [
+        {"name": "writingprompts", "dataset": "euclaise/writingprompts", "config": "default",
+         "split": "train", "field": "story", "offsets": [0, 30000, 60000, 90000, 120000],
+         "target": 120},
+    ],
 }
 
 
@@ -81,9 +89,11 @@ def clean(text):
     text = html.unescape(text)
     text = TAG_RE.sub(" ", text)
     text = text.replace("\\n", " ").replace("\\'", "'")
+    text = text.replace("``", '"').replace("''", '"')  # LaTeX-style quotes -> straight
     text = WS_RE.sub(" ", text)
     # Some research dumps are pre-tokenized ("iran , shiraz . "); re-attach
-    # punctuation so sentence/word stats are not skewed by the spacing.
+    # punctuation so sentence/word stats are not skewed by the spacing. (Ellipsis
+    # is left intact: it is legitimate literary punctuation.)
     text = re.sub(r"\s+([.,;:!?])", r"\1", text)
     return text.strip()
 
