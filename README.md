@@ -16,10 +16,13 @@ pattern knowledge but adds the three things a static checklist can't do.
      rates, tell counts) measured against a human reference band.
    - an LLM **judge panel** (`judges/`) — an adversarial detector lens, a
      register-fidelity lens, and a meaning-fidelity lens.
-2. **Register awareness.** "Human" is register-specific. Two registers ship today,
-   **spontaneous** and **scientific**, each with its own `registers/<name>.md` +
-   calibrated `corpus/<name>/`. They differ sharply: scientific treats passive
-   voice, hedging, zero contractions, and uniform rhythm as human. Literary is next.
+2. **Register awareness.** "Human" is register-specific. Three registers ship:
+   **spontaneous**, **scientific**, and **literary**, each with its own
+   `registers/<name>.md` + calibrated `corpus/<name>/`. They differ sharply:
+   scientific treats passive voice and zero contractions as human; literary
+   tolerates ~13x the em dashes of casual prose and the highest rhythm variation,
+   where the tell is *hollow* figuration, not its presence. Same machinery,
+   recalibrated per register.
 3. **Anti-over-correction.** Every human band has a floor **and** a ceiling. Zero
    em dashes, flat sentence rhythm, or zero contractions get flagged as
    `self_tell_flags` — because over-laundered prose is its own tell. The original
@@ -47,6 +50,7 @@ python3 scripts/build_reference.py --register spontaneous
 # Prove it beats the original (blind A/B):
 python3 eval/run_eval.py --register spontaneous
 python3 eval/run_eval.py --register scientific
+python3 eval/run_eval.py --register literary
 ```
 
 Run the tests (zero dependencies):
@@ -65,9 +69,10 @@ python3 tests/run.py
 | Proof it works | trust | blind A/B eval harness |
 
 Against bands calibrated from real human text, humanizer-pro lands closer to the
-human distribution on **5/5** spontaneous samples (mean distance 0.42 vs 0.72, far
-less over-corrected) and **4/4** scientific samples (0.25 vs 0.76) — two registers
-with opposite norms, same machinery. See [`eval/REPORT.md`](eval/REPORT.md).
+human distribution on **5/5** spontaneous, **4/4** scientific, and **4/4** literary
+samples — three registers with very different norms, same machinery. The em-dash
+ceiling alone runs from 0.00 (scientific) to 1.71 (literary), which is why a
+one-size humanizer damages most registers. See [`eval/REPORT.md`](eval/REPORT.md).
 
 ## Explicit non-goal
 

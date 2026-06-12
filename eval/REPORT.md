@@ -79,3 +79,38 @@ One scientific passage, scored under both registers:
 
 A single-register humanizer would "fix" the paper's passive voice and add
 contractions, damaging it. humanizer-pro adapts to the register instead.
+
+## Literary register (phase 3)
+
+Calibrated on 120 human short stories (r/WritingPrompts). Highest tolerance for the
+devices other registers flag (em dashes, fragments, varied rhythm).
+
+| sample | base_dist | pro_dist | closer-to-human |
+|--------|-----------|----------|-----------------|
+| 01-rain | 0.845 | **0.516** | **pro** |
+| 02-forest | 0.823 | **0.496** | **pro** |
+| 03-love | 0.753 | **0.477** | **pro** |
+| 04-noir | 0.815 | **0.385** | **pro** |
+| **mean** | **0.809** | **0.469** | **pro 4/4** |
+
+baseline = original-style rewrite (flattened: dashes removed, rhythm evened, imagery
+stripped). pro = tells removed while keeping voice, varied rhythm, and specific
+imagery. Pro wins 4/4. Notably the flattened baseline (0.81 mean) scores **worse**
+than the original AI purple prose (0.66 mean): flattening fiction is the maximal
+failure mode, not a fix.
+
+## Three-register fingerprint (the whole thesis in one table)
+
+Bands from real human corpora; same scorer, three calibrations:
+
+| feature | spontaneous | scientific | literary |
+|---------|-------------|------------|----------|
+| sentence length (mean) | 10–26 | 16–33 | 8–20 |
+| rhythm variation (cv) | 0.38–0.76 | 0.23–0.72 | 0.45–0.95 |
+| contractions | yes | ~0 | yes |
+| em-dash ceiling | 0.13 | 0.00 | **1.71** |
+| AI-tell tolerance | 0.21 | 0.61 | 0.19 |
+
+The em-dash row alone refutes a blanket ban: near-zero in science, ~13x higher in
+fiction. "Human" is not one thing, and a tool that pretends it is will damage two of
+these three registers.
