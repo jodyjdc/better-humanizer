@@ -119,3 +119,32 @@ def test_score_feature_status_values():
     for feat in out["features"].values():
         assert feat["status"] in ("below", "in", "above")
         assert "floor" in feat and "ceiling" in feat and "z" in feat
+
+
+AI_TELLY = (
+    "In today's rapidly evolving landscape, this stands as a testament to human "
+    "ingenuity. It's not just about speed; it's about unlocking creativity at "
+    "scale. These groundbreaking tools, nestled at the intersection of research "
+    "and practice, underscore the pivotal role of automation. Ultimately, the "
+    "future looks bright."
+)
+HUMAN_CLEAN = (
+    "I used the thing for a week. It's quick at the boring stuff, config and test "
+    "scaffolding and the refactors I'd put off. It's also wrong about a third of "
+    "the time, which is its own kind of work. So, useful. Not magic. I'm keeping "
+    "it, but I read every line before it ships."
+)
+
+
+def test_score_tell_density_enters_distance():
+    out = stylo.score(AI_TELLY, "spontaneous")
+    assert "tell_rate" in out["features"]
+    assert out["features"]["tell_rate"]["value"] > 0
+
+
+def test_score_discriminates_ai_from_human():
+    ai = stylo.score(AI_TELLY, "spontaneous")
+    human = stylo.score(HUMAN_CLEAN, "spontaneous")
+    # Tell-laden AI text must score a clearly larger distance-to-human.
+    assert ai["stylo_distance"] > human["stylo_distance"] + 0.2
+    assert sum(ai["tells"].values()) > sum(human["tells"].values())

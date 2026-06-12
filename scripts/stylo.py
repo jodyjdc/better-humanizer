@@ -250,6 +250,11 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # (a self-tell), not a win. This is the anti-over-correction core of humanizer-pro.
 OVER_CORRECTION = {"em_dash_rate", "sentence_length_cv", "contraction_rate"}
 
+# Weight on AI tell density (hits per 100 tokens) in the composite distance. The
+# lexicon is the single most reliable objective AI signal, so it must move the
+# number; stylometric shape alone cannot tell "delve/tapestry" prose apart.
+TELL_WEIGHT = 0.05
+
 _LEXICON_CACHE = None
 
 
@@ -328,14 +333,34 @@ def score(text, register="spontaneous", ref=None):
     if ref_fw:
         fw_dist = cosine_distance(function_word_vector(text), ref_fw)
 
-    stylo_distance = (statistics.fmean(zs) if zs else 0.0) + fw_dist
+    # Outlier veto is judged on stylometric SHAPE only (banded features), before
+    # tell density is mixed in, so a couple of lexical tells don't hard-veto a
+    # candidate that is otherwise well within the human band.
     stylo_outlier = any(abs(f["z"]) > 3 for f in features.values())
+
+    # AI tell density: the most reliable objective signal. Folded directly into
+    # the distance (one-sided: only excess hurts) so the scorer is not blind to
+    # lexical AI-isms like "delve / tapestry / underscore".
+    tells = tell_hits(text, _load_lexicon())
+    n_tok = len(tokenize(text)) or 1
+    tell_rate = sum(tells.values()) / n_tok * 100
+    tr_ceiling = 0.5
+    features["tell_rate"] = {
+        "value": round(tell_rate, 4),
+        "floor": 0.0,
+        "ceiling": tr_ceiling,
+        "status": "above" if tell_rate > tr_ceiling else "in",
+        "z": round((tell_rate - tr_ceiling) / tr_ceiling, 4) if tell_rate > tr_ceiling else 0.0,
+    }
+
+    base = statistics.fmean(zs) if zs else 0.0
+    stylo_distance = base + fw_dist + TELL_WEIGHT * tell_rate
 
     return {
         "register": register,
         "calibrated": ref.get("calibrated", False),
         "features": features,
-        "tells": tell_hits(text, _load_lexicon()),
+        "tells": tells,
         "self_tell_flags": self_tells,
         "stylo_distance": round(stylo_distance, 4),
         "stylo_outlier": stylo_outlier,

@@ -1,0 +1,1 @@
+I gave an AI coding assistant a real week of work. It's genuinely fast at the dull stuff: boilerplate, config, the repetitive refactors I keep avoiding. Where it falls down is judgment. It'll write something that looks right, compiles, and quietly does the wrong thing if you stop reading. So I keep it on, but I read every line before it ships. Faster, not smarter.
