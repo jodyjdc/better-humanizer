@@ -148,3 +148,31 @@ def test_score_discriminates_ai_from_human():
     # Tell-laden AI text must score a clearly larger distance-to-human.
     assert ai["stylo_distance"] > human["stylo_distance"] + 0.2
     assert sum(ai["tells"].values()) > sum(human["tells"].values())
+
+
+# Two rewrites with ~zero AI tells, but one is over-corrected (the failure mode
+# of the original humanizer: flat rhythm, no em dash, no contractions). These are
+# the exact eval/out worked-example texts, where the ordering must hold robustly.
+SCRUBBED = (
+    "AI coding assistants speed up parts of the work. They help with boilerplate "
+    "and repetitive edits. They do not replace judgment, and they can produce "
+    "errors. The tools are useful for routine tasks. Used with care, they can save "
+    "time. They are not a replacement for review."
+)
+REGISTER_TRUE = (
+    "I gave an AI coding assistant a real week of work. It's genuinely fast at the "
+    "dull stuff: boilerplate, config, the repetitive refactors I keep avoiding. "
+    "Where it falls down is judgment. It'll write something that looks right, "
+    "compiles, and quietly does the wrong thing if you stop reading. So I keep it "
+    "on, but I read every line before it ships. Faster, not smarter."
+)
+
+
+def test_overcorrection_penalized_in_distance():
+    scrubbed = stylo.score(SCRUBBED, "spontaneous")
+    faithful = stylo.score(REGISTER_TRUE, "spontaneous")
+    # Both are tell-free, but the scrubbed one is more over-corrected...
+    assert sum(scrubbed["tells"].values()) == 0
+    assert len(scrubbed["self_tell_flags"]) > len(faithful["self_tell_flags"])
+    # ...and that over-correction must cost it in the objective distance.
+    assert scrubbed["stylo_distance"] > faithful["stylo_distance"]

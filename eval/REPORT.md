@@ -19,7 +19,17 @@ python3 eval/run_eval.py --register spontaneous
 
 | sample | base_dist | pro_dist | base_self-tells | pro_self-tells | closer-to-human |
 |--------|-----------|----------|-----------------|----------------|-----------------|
-| _pending_ | | | | | |
+| 01-tech-opinion | 0.363 | 0.171 | 3 | 1 | **pro** |
+| 02-travel | _pending_ | | | | |
+| 03-productivity | _pending_ | | | | |
+| 04-food | _pending_ | | | | |
+| 05-personal | _pending_ | | | | |
+
+Worked example (sample 01): the AI original scores `dist=1.373` (14 tell hits).
+The baseline-style scrubbed rewrite drops the tells but over-corrects (flat
+rhythm, no contractions, no em dash) -> `dist=0.363`, 3 self-tells. The
+register-faithful pro rewrite -> `dist=0.171`, 1 self-tell. Pro is closer to the
+human band precisely because it does not scrub the text flat.
 
 `dist` = stylometric distance to the human band (lower is better). `self-tells` =
 over-correction flags (lower is better).

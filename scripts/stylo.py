@@ -255,6 +255,11 @@ OVER_CORRECTION = {"em_dash_rate", "sentence_length_cv", "contraction_rate"}
 # number; stylometric shape alone cannot tell "delve/tapestry" prose apart.
 TELL_WEIGHT = 0.05
 
+# Weight per self-tell flag (over-correction below a human floor). This is the
+# headline differentiator from the original humanizer: scrubbing a text flat is
+# itself a tell, so it must cost distance, not just show up as a side flag.
+SELF_TELL_WEIGHT = 0.1
+
 _LEXICON_CACHE = None
 
 
@@ -354,7 +359,12 @@ def score(text, register="spontaneous", ref=None):
     }
 
     base = statistics.fmean(zs) if zs else 0.0
-    stylo_distance = base + fw_dist + TELL_WEIGHT * tell_rate
+    stylo_distance = (
+        base
+        + fw_dist
+        + TELL_WEIGHT * tell_rate
+        + SELF_TELL_WEIGHT * len(self_tells)
+    )
 
     return {
         "register": register,
