@@ -35,9 +35,11 @@ critique. That feedback loop is the "self-improvement".
 # Score any text against the human band for a register:
 python3 scripts/stylo.py path/to/text.txt --register spontaneous
 
-# Calibrate the bands to a real corpus (or to your own writing):
-#   drop *.txt into corpus/spontaneous/ then:
+# (Re)calibrate the human bands. The shipped reference-stats.json is already
+# calibrated from 120 real human texts; rebuild or extend it with:
+python3 scripts/fetch_corpus.py                       # pull IMDB+Yelp (pre-2022, human)
 python3 scripts/build_reference.py --register spontaneous
+#   or drop your own *.txt under corpus/spontaneous/ and rerun build_reference.
 
 # Rewrite with the full loop (inside Claude Code / OpenCode):
 /humanizer-pro    # then paste text; see SKILL.md for the loop
@@ -60,6 +62,11 @@ python3 tests/run.py
 | Voice | one default | register profiles + corpus calibration |
 | Em dashes / triads | hard-banned | targeted to the human band (floor + ceiling) |
 | Proof it works | trust | blind A/B eval harness |
+
+On the 5-sample eval, against bands calibrated from 120 real human texts,
+humanizer-pro lands closer to the human distribution on **5/5** samples (mean
+distance 0.42 vs 0.72) and is far less over-corrected (0.2 vs 1.8 self-tells per
+sample). See [`eval/REPORT.md`](eval/REPORT.md).
 
 ## Explicit non-goal
 
