@@ -58,7 +58,10 @@ For each candidate, gather two scorecards:
   ```
   Read back `stylo_distance`, `self_tell_flags`, `stylo_outlier`, `features`.
 - **Judge panel** (semantic): evaluate the candidate with all three lenses, filling
-  the templates in `judges/`:
+  the templates in `judges/`. In `detector.md` and `register.md`, substitute
+  `{{REGISTER}}` and give the judge the register profile (`registers/<register>.md`)
+  so formality is judged correctly (passive voice and zero contractions are human in
+  scientific writing, not tells):
   - `judges/detector.md` -> `p_ai`, `tells`, `critique`
   - `judges/register.md` -> `register_fit`, `breaks`, `critique`
   - `judges/meaning.md` (needs SOURCE + candidate) -> `fidelity`, `dropped`, ...
@@ -110,7 +113,9 @@ of AI writing", machine-readable). It is the single source of truth, shared by
 
 ## Scope
 
-v1 is the `spontaneous` register only. Scientific and literary registers reuse this
-exact machinery with their own `registers/<name>.md` + `corpus/<name>/`. The target
-is always the human distribution for the register — never a specific commercial
-detector.
+Registers available now: **spontaneous** and **scientific**, each with its own
+`registers/<name>.md` + calibrated `corpus/<name>/`. They behave very differently
+(scientific tolerates passive voice, hedging, zero contractions, and ~3x the AI-tell
+vocabulary), which is the whole point: "human" is register-specific. Literary is the
+next register and reuses this exact machinery. The target is always the human
+distribution for the register, never a specific commercial detector.

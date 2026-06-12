@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
-"""Blind A/B eval: original humanizer vs humanizer-pro on the same AI samples.
+"""Blind A/B eval: original humanizer vs humanizer-pro, per register.
 
 Deterministic part (this script): stylometric distance-to-human for each
-system's rewrite of each sample. Semantic part: a blind judge
-(eval/judge_blind.md), run by the agent, decides which rewrite is more human and
-more faithful WITHOUT knowing which system produced it. This script handles
-discovery + the stylometric table; it does not call an LLM.
+system's rewrite of each sample, scored against the register's calibrated bands.
+Semantic part: a blind judge (eval/judge_blind.md), run by the agent with an
+out-of-loop model, decides which rewrite is more human and more faithful.
 
-Workflow:
-  1. For each eval/ai_samples/<name>.txt, generate two rewrites:
-       - baseline (original humanizer)  -> eval/out/<name>.baseline.txt
-       - pro      (/humanizer-pro)      -> eval/out/<name>.pro.txt
-  2. python3 eval/run_eval.py            # stylometric table
-  3. Run eval/judge_blind.md per sample  # blind human-ness + fidelity verdict
-  4. Fill eval/REPORT.md
+Layout (per register <reg>):
+  eval/ai_samples/<reg>/<name>.txt           AI-generated source
+  eval/out/<reg>/<name>.baseline.txt         original-humanizer rewrite
+  eval/out/<reg>/<name>.pro.txt              /humanizer-pro rewrite
+
+Run:  python3 eval/run_eval.py --register scientific
 """
 import argparse
 import pathlib
@@ -25,12 +23,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import stylo  # noqa: E402
 
 
-def samples():
-    return sorted((HERE / "ai_samples").glob("*.txt"))
+def samples(register):
+    return sorted((HERE / "ai_samples" / register).glob("*.txt"))
 
 
-def out_paths(stem):
-    return HERE / "out" / f"{stem}.baseline.txt", HERE / "out" / f"{stem}.pro.txt"
+def out_paths(register, stem):
+    base = HERE / "out" / register
+    return base / f"{stem}.baseline.txt", base / f"{stem}.pro.txt"
 
 
 def main(argv=None):
@@ -40,40 +39,40 @@ def main(argv=None):
                     help="list samples + rewrite status, then exit")
     args = ap.parse_args(argv)
 
-    ss = samples()
+    ss = samples(args.register)
     if not ss:
-        print("no samples in eval/ai_samples/", file=sys.stderr)
+        print(f"no samples in eval/ai_samples/{args.register}/", file=sys.stderr)
         return 1
 
     if args.dry_run:
-        print(f"{len(ss)} sample(s):")
+        print(f"[{args.register}] {len(ss)} sample(s):")
         for s in ss:
-            b, p = out_paths(s.stem)
-            print(f"  {s.name:22} baseline={'ok' if b.exists() else 'missing':7} "
+            b, p = out_paths(args.register, s.stem)
+            print(f"  {s.name:24} baseline={'ok' if b.exists() else 'missing':7} "
                   f"pro={'ok' if p.exists() else 'missing'}")
         return 0
 
-    print(f"{'sample':22} {'base_dist':>9} {'pro_dist':>9} "
+    print(f"[{args.register}]")
+    print(f"{'sample':24} {'base_dist':>9} {'pro_dist':>9} "
           f"{'base_self':>9} {'pro_self':>9}  winner")
     rows, pending = [], 0
     for s in ss:
-        b, p = out_paths(s.stem)
+        b, p = out_paths(args.register, s.stem)
         if not (b.exists() and p.exists()):
             pending += 1
-            print(f"{s.name:22} {'--':>9} {'--':>9}  (rewrites pending)")
+            print(f"{s.name:24} {'--':>9} {'--':>9}  (rewrites pending)")
             continue
         sb = stylo.score(b.read_text(encoding="utf-8"), args.register)
         sp = stylo.score(p.read_text(encoding="utf-8"), args.register)
         winner = "pro" if sp["stylo_distance"] < sb["stylo_distance"] else "baseline"
         rows.append(winner)
-        print(f"{s.name:22} {sb['stylo_distance']:>9.3f} {sp['stylo_distance']:>9.3f} "
+        print(f"{s.name:24} {sb['stylo_distance']:>9.3f} {sp['stylo_distance']:>9.3f} "
               f"{len(sb['self_tell_flags']):>9} {len(sp['self_tell_flags']):>9}  {winner}")
 
     if rows:
-        pro_wins = rows.count("pro")
-        print(f"\nstylometric: pro closer-to-human on {pro_wins}/{len(rows)} samples")
+        print(f"\nstylometric: pro closer-to-human on {rows.count('pro')}/{len(rows)} samples")
     if pending:
-        print(f"{pending} sample(s) pending rewrites (save to eval/out/).")
+        print(f"{pending} sample(s) pending rewrites (save to eval/out/{args.register}/).")
     return 0
 
 

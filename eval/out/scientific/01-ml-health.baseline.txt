@@ -1,0 +1,1 @@
+This study applies machine learning to healthcare. The framework uses clinical data to improve patient outcomes. Data quality, model design, and clinical use all affect the results. It is a step forward for precision medicine.
