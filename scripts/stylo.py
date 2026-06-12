@@ -212,6 +212,15 @@ def rule_of_three(text):
     return len(RULE_OF_THREE_RE.findall(text))
 
 
+def tell_rate(text, lexicon=None):
+    """AI tell-lexicon hits per 100 tokens. Tolerance is register-specific:
+    real scientific prose uses 'crucial/underscore/interplay' far more than a
+    blog does, so the human ceiling for this is calibrated per register."""
+    lex = lexicon if lexicon is not None else _load_lexicon()
+    n = len(tokenize(text)) or 1
+    return sum(tell_hits(text, lex).values()) / n * 100
+
+
 # --------------------------------------------------------------------------
 # Function-word fingerprint
 # --------------------------------------------------------------------------
@@ -343,26 +352,30 @@ def score(text, register="spontaneous", ref=None):
     # candidate that is otherwise well within the human band.
     stylo_outlier = any(abs(f["z"]) > 3 for f in features.values())
 
-    # AI tell density: the most reliable objective signal. Folded directly into
-    # the distance (one-sided: only excess hurts) so the scorer is not blind to
-    # lexical AI-isms like "delve / tapestry / underscore".
+    # AI tell density: the most reliable objective signal. Only the EXCESS over
+    # the register's calibrated human ceiling is penalized, so scientific prose
+    # (which legitimately uses "crucial/underscore/interplay") is not punished for
+    # vocabulary a blog would never use. Ceiling is calibrated per register; falls
+    # back to a strict 0.5 when the corpus has not measured it.
     tells = tell_hits(text, _load_lexicon())
     n_tok = len(tokenize(text)) or 1
-    tell_rate = sum(tells.values()) / n_tok * 100
-    tr_ceiling = 0.5
+    tr = sum(tells.values()) / n_tok * 100
+    tr_ceiling = bands.get("tell_rate", {}).get("ceiling", 0.5)
+    tr_width = tr_ceiling or 1.0
     features["tell_rate"] = {
-        "value": round(tell_rate, 4),
+        "value": round(tr, 4),
         "floor": 0.0,
         "ceiling": tr_ceiling,
-        "status": "above" if tell_rate > tr_ceiling else "in",
-        "z": round((tell_rate - tr_ceiling) / tr_ceiling, 4) if tell_rate > tr_ceiling else 0.0,
+        "status": "above" if tr > tr_ceiling else "in",
+        "z": round((tr - tr_ceiling) / tr_width, 4) if tr > tr_ceiling else 0.0,
     }
+    tell_excess = max(0.0, tr - tr_ceiling)
 
     base = statistics.fmean(zs) if zs else 0.0
     stylo_distance = (
         base
         + fw_dist
-        + TELL_WEIGHT * tell_rate
+        + TELL_WEIGHT * tell_excess
         + SELF_TELL_WEIGHT * len(self_tells)
     )
 

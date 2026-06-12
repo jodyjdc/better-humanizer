@@ -192,6 +192,25 @@ REGISTER_TRUE = (
 )
 
 
+def _ref_with_tell_ceiling(ceiling):
+    return {
+        "register": "t", "calibrated": False,
+        "bands": {**TEST_REF["bands"], "tell_rate": {"floor": 0.0, "ceiling": ceiling}},
+        "function_word_vector": {},
+    }
+
+
+def test_tell_tolerance_register_calibrated():
+    # Same tell-laden text; a register that tolerates more tells (high ceiling)
+    # must score it closer to human than a strict register.
+    text = "We delve into the crucial interplay of these intricate findings here."
+    lax = stylo.score(text, ref=_ref_with_tell_ceiling(50))
+    strict = stylo.score(text, ref=_ref_with_tell_ceiling(0.5))
+    assert lax["features"]["tell_rate"]["status"] == "in"
+    assert strict["features"]["tell_rate"]["status"] == "above"
+    assert lax["stylo_distance"] < strict["stylo_distance"]
+
+
 def test_overcorrection_penalized_in_distance():
     scrubbed = stylo.score(SCRUBBED, "spontaneous", ref=TEST_REF)
     faithful = stylo.score(REGISTER_TRUE, "spontaneous", ref=TEST_REF)

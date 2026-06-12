@@ -33,6 +33,13 @@ def aggregate(texts):
             "floor": round(max(0.0, mean - 1.0 * sd), 4),
             "ceiling": round(mean + 1.5 * sd, 4),
         }
+    # Register-specific AI-tell tolerance: how much of the lexicon the humans in
+    # this register actually use (scientific >> spontaneous).
+    tr_vals = [stylo.tell_rate(t) for t in texts]
+    tr_mean = statistics.fmean(tr_vals)
+    tr_sd = statistics.pstdev(tr_vals) if len(tr_vals) > 1 else 0.0
+    bands["tell_rate"] = {"floor": 0.0, "ceiling": round(tr_mean + 1.5 * tr_sd, 4)}
+
     fw_rows = [stylo.function_word_vector(t) for t in texts]
     keys = set().union(*fw_rows) if fw_rows else set()
     fw = {

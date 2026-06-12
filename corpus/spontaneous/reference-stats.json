@@ -51,6 +51,10 @@
     "emoji": {
       "floor": 0.0,
       "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.2069
     }
   },
   "function_word_vector": {

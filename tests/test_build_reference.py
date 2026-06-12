@@ -33,6 +33,8 @@ def test_build_over_fixture():
     cv = stats["bands"]["sentence_length_cv"]
     assert cv["ceiling"] >= cv["floor"]
     assert stats["function_word_vector"]  # non-empty: both texts have function words
+    assert "tell_rate" in stats["bands"]  # register-specific tell tolerance calibrated
+    assert stats["bands"]["tell_rate"]["ceiling"] >= 0
 
 
 def test_build_empty_corpus_is_noop():
