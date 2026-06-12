@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "significance_inflation",
+    "category": "content",
+    "terms": ["stands as", "serves as", "is a testament", "a testament to", "reminder of", "vital role", "significant role", "crucial role", "pivotal role", "key role", "pivotal moment", "underscores its importance", "highlights its significance", "reflects broader", "symbolizing", "setting the stage for", "marking a shift", "represents a shift", "key turning point", "evolving landscape", "focal point", "indelible mark", "deeply rooted", "contributing to the broader"],
+    "regexes": ["\\bplays? an? (?:vital|significant|crucial|pivotal|key) role\\b"]
+  },
+  {
+    "id": 3,
+    "name": "ing_analysis",
+    "category": "content",
+    "terms": [],
+    "regexes": ["\\b(?:highlighting|underscoring|emphasizing|ensuring|reflecting|symbolizing|showcasing|fostering|cultivating|encompassing|contributing to|reinforcing) [a-z]+ing\\b", ",\\s+(?:highlighting|underscoring|emphasizing|reflecting|symbolizing|showcasing) "]
+  },
+  {
+    "id": 4,
+    "name": "promotional",
+    "category": "content",
+    "terms": ["boasts a", "vibrant", "rich cultural", "rich history", "rich tapestry", "profound", "enhancing its", "exemplifies", "commitment to", "natural beauty", "nestled", "in the heart of", "groundbreaking", "renowned", "breathtaking", "must-visit", "stunning", "world-class"],
+    "regexes": []
+  },
+  {
+    "id": 5,
+    "name": "vague_attribution",
+    "category": "content",
+    "terms": ["industry reports", "observers have noted", "experts argue", "experts believe", "some critics argue", "critics argue", "studies suggest", "it is widely believed", "many believe"],
+    "regexes": []
+  },
+  {
+    "id": 6,
+    "name": "challenges_section",
+    "category": "content",
+    "terms": ["challenges and future prospects", "challenges and legacy", "future outlook", "despite these challenges"],
+    "regexes": ["\\bdespite (?:its|the)[^.?!]{1,40}faces (?:several|numerous|many) challenges\\b"]
+  },
+  {
+    "id": 7,
+    "name": "ai_vocabulary",
+    "category": "language",
+    "terms": ["delve", "align with", "enduring", "enhance", "fostering", "garner", "interplay", "intricate", "intricacies", "pivotal", "showcase", "tapestry", "testament", "underscore", "underscores", "valuable", "leverage", "seamless", "robust", "holistic", "nuanced", "myriad", "multifaceted", "realm", "navigate the", "in today's"],
+    "regexes": []
+  },
+  {
+    "id": 8,
+    "name": "copula_avoidance",
+    "category": "language",
+    "terms": [],
+    "regexes": ["\\b(?:serves as|stands as|functions as|acts as|boasts|exemplifies)\\b"]
+  },
+  {
+    "id": 9,
+    "name": "negative_parallelism",
+    "category": "language",
+    "terms": [],
+    "regexes": ["\\bnot just\\b[^.?!]{1,60}\\bbut\\b", "\\bit'?s not (?:just|merely) about\\b", "\\bnot only\\b[^.?!]{1,60}\\bbut also\\b"]
+  },
+  {
+    "id": 12,
+    "name": "false_range",
+    "category": "language",
+    "terms": [],
+    "regexes": ["\\bfrom the [a-z]+ of [^.?!]{1,40} to the [a-z]+ of\\b"]
+  },
+  {
+    "id": 13,
+    "name": "subjectless_fragment",
+    "category": "language",
+    "terms": ["no configuration needed", "no setup required", "no guessing"],
+    "regexes": []
+  },
+  {
+    "id": 20,
+    "name": "collaborative_artifact",
+    "category": "communication",
+    "terms": ["i hope this helps", "of course!", "certainly!", "you're absolutely right", "would you like me to", "want me to", "should i continue", "let me know if", "here is an overview", "here's an overview"],
+    "regexes": []
+  },
+  {
+    "id": 22,
+    "name": "sycophancy",
+    "category": "communication",
+    "terms": ["great question", "excellent point", "that's a great", "i'd be happy to", "fantastic question"],
+    "regexes": []
+  },
+  {
+    "id": 21,
+    "name": "cutoff_disclaimer",
+    "category": "communication",
+    "terms": ["as of my last", "up to my last training", "based on available information", "maintains a low profile", "keeps personal details private", "prefers to stay out of the spotlight"],
+    "regexes": ["\\bwhile specific details (?:about|are)[^.?!]{1,40}(?:limited|scarce|not extensively)\\b"]
+  },
+  {
+    "id": 23,
+    "name": "filler",
+    "category": "filler",
+    "terms": ["in order to", "due to the fact that", "at this point in time", "in the event that", "has the ability to", "it is important to note that", "needless to say", "it should be noted that"],
+    "regexes": []
+  },
+  {
+    "id": 24,
+    "name": "hedging",
+    "category": "filler",
+    "terms": ["it could potentially", "might possibly", "it could be argued that", "to some extent", "it is worth noting"],
+    "regexes": ["\\bcould (?:potentially|possibly)\\b"]
+  },
+  {
+    "id": 25,
+    "name": "generic_conclusion",
+    "category": "filler",
+    "terms": ["the future looks bright", "exciting times", "journey toward excellence", "step in the right direction", "in conclusion", "ultimately"],
+    "regexes": []
+  },
+  {
+    "id": 27,
+    "name": "persuasive_authority",
+    "category": "filler",
+    "terms": ["the real question is", "at its core", "in reality", "what really matters", "the deeper issue", "the heart of the matter"],
+    "regexes": ["(?:^|[.?!]\\s+)fundamentally,"]
+  },
+  {
+    "id": 28,
+    "name": "signposting",
+    "category": "filler",
+    "terms": ["let's dive in", "let's explore", "let's break this down", "here's what you need to know", "now let's look at", "without further ado", "let's dive into", "let's take a look"],
+    "regexes": []
+  },
+  {
+    "id": 32,
+    "name": "aphorism_formula",
+    "category": "filler",
+    "terms": ["becomes a trap"],
+    "regexes": ["\\bis the [a-z]+ of [a-z]+\\b", "\\bnot a [a-z]+ but a [a-z]+\\b", "\\bthe (?:language|currency|architecture) of\\b"]
+  },
+  {
+    "id": 33,
+    "name": "conversational_opener",
+    "category": "filler",
+    "terms": [],
+    "regexes": ["(?:^|[.?!\"]\\s+)(?:Honestly|Look|Real talk)[?,]", "(?:^|[.?!]\\s+)(?:Here's the thing|The thing is|Let's be honest)\\b"]
+  }
+]
