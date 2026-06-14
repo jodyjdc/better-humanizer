@@ -485,6 +485,8 @@ def score(text, register="spontaneous", ref=None):
         if val is None:  # paragraph_cv on single-paragraph input: omit entirely
             continue
         band = bands.get(name) or reg_defaults[name]
+        # Lenient by design (unlike the banded loop, which fails loud on a missing
+        # key): a partially-malformed calibrated band just disables that penalty.
         floor = band.get("floor", 0.0)
         ceiling = band.get("ceiling")
         if name == "paragraph_cv":  # low = uniform = tell

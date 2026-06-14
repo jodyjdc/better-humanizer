@@ -172,6 +172,9 @@ def test_discourse_distance_penalizes_ai_structure():
     ai = stylo.score(AI_STRUCTURED, "spontaneous")
     human = stylo.score(HUMAN_STRUCTURED, "spontaneous")
     assert ai["stylo_distance"] > human["stylo_distance"]
+    # Guard the discourse wiring itself (the distance gap alone also reflects AI
+    # tells): the AI structure must trip the thesis/summary-opener penalty.
+    assert ai["features"]["structural_opener_rate"]["status"] == "above"
 
 
 def test_discourse_single_paragraph_omits_paragraph_cv():
@@ -181,13 +184,35 @@ def test_discourse_single_paragraph_omits_paragraph_cv():
 
 
 def test_discourse_excluded_from_outlier_veto():
-    # A transition-stuffed short text must not hard-veto solely on discourse
-    # (discourse is excluded from stylo_outlier, like tell_rate).
-    stuffed = ("Moreover, x.\n\nFurthermore, y.\n\nAdditionally, z.\n\n"
-               "Consequently, w.\n\nHence, v.")
-    out = stylo.score(stuffed, "spontaneous")
-    assert out["features"]["transition_density"]["value"] > 0
-    assert isinstance(out["stylo_outlier"], bool)
+    # Discourse z can blow far past 3, but discourse is scored AFTER the outlier
+    # veto, so it must never set stylo_outlier. Use a ref with very wide banded
+    # bands so the ONLY out-of-band signal is discourse (transition flooding);
+    # ref has no discourse keys, so those fall back to DEFAULT_DISCOURSE_BANDS.
+    wide = {
+        "register": "t", "calibrated": False,
+        "bands": {
+            "sentence_length_mean": {"floor": 0, "ceiling": 100},
+            "sentence_length_cv": {"floor": 0.0, "ceiling": 5},
+            "mtld": {"floor": 0, "ceiling": 1000},
+            "ttr": {"floor": 0.0, "ceiling": 1.0},
+            "hapax_ratio": {"floor": 0.0, "ceiling": 1.0},
+            "em_dash_rate": {"floor": 0.0, "ceiling": 100},
+            "comma_rate": {"floor": 0.0, "ceiling": 100},
+            "contraction_rate": {"floor": 0.0, "ceiling": 100},
+            "rule_of_three": {"floor": 0, "ceiling": 100},
+            "exclaim": {"floor": 0, "ceiling": 100},
+            "bold": {"floor": 0, "ceiling": 100},
+            "emoji": {"floor": 0, "ceiling": 100},
+        },
+        "function_word_vector": {},
+    }
+    stuffed = ("Moreover, the team shipped. Furthermore, we tested. "
+               "Additionally, it scaled. Consequently, users stayed.")
+    out = stylo.score(stuffed, "spontaneous", ref=wide)
+    # Discourse is wildly out of band...
+    assert out["features"]["transition_density"]["z"] > 3
+    # ...but it does NOT trip the hard veto (moving the block above the veto fails this).
+    assert out["stylo_outlier"] is False
 
 
 def test_cosine_distance_identity():
