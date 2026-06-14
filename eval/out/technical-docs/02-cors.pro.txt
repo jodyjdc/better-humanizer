@@ -1,0 +1,19 @@
+The CORS error comes from the browser, not from your Express server. Your server is responding fine, but the browser blocks the response because it doesn't see an Access-Control-Allow-Origin header, so the fix is to add that header. The easiest way to do that is the cors middleware.
+
+Install it:
+
+    npm install cors
+
+Then import it and apply it before you define your routes. If you apply it after, the headers won't be set on those routes and you'll keep seeing the same error.
+
+    const cors = require('cors');
+    app.use(cors());
+
+That enables CORS for every origin. It's fine while you're developing, but don't ship it like that. In production you want to pass an options object so you only allow the origins you actually serve, and you can list the methods you accept too:
+
+    app.use(cors({
+      origin: 'https://yourapp.com',
+      methods: ['GET', 'POST']
+    }));
+
+If it still fails after this, check that your server is actually reached at all — a 404 or a proxy in front of it can look like a CORS error when it isn't one. Restart the server so the middleware loads, then try your request again.

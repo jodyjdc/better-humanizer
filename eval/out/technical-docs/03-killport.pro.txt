@@ -1,0 +1,15 @@
+"address already in use" means a process is still bound to the port — usually a server you killed with Ctrl+Z instead of Ctrl+C, so it got suspended, not stopped, and never released the socket.
+
+Find what's holding the port (say 3000):
+
+    lsof -i :3000
+
+Note the PID in the second column. Confirm it's the process you think it is before you kill anything — you don't want to take down something unrelated. Then kill it:
+
+    kill -9 <PID>
+
+If you'd rather do it in one shot, npx kill-port wraps both steps:
+
+    npx kill-port 3000
+
+On Windows the equivalents are netstat -ano | findstr :3000 to get the PID and taskkill /PID <PID> /F to stop it. Re-run your server afterward; the port is free again.

@@ -1,0 +1,15 @@
+"package does not exist" means Maven compiled against a dependency it can't find on the classpath — the jar never made it into your local repository, or the coordinates in pom.xml are wrong.
+
+Check pom.xml first. Confirm the dependency block is there, and that the groupId and artifactId exactly match the ones on Maven Central; a single typo in the artifactId is the usual cause, and Maven won't warn you, it just resolves nothing.
+
+Then force a refresh:
+
+    mvn clean install -U
+
+The -U flag tells Maven to update snapshots and re-check remote repositories instead of trusting the stale local cache.
+
+If that still fails, the cached entry is probably corrupt. Delete it and let Maven re-download:
+
+    rm -rf ~/.m2/repository/com/example/yourlib
+
+Don't nuke the whole ~/.m2/repository unless you have to — re-downloading every dependency for every project is slow. Re-run the build after deleting just the one folder.

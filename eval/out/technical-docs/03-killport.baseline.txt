@@ -1,0 +1,5 @@
+The task of locating and terminating a process that is occupying a particular network port is one that developers encounter with some regularity. The error that is typically observed indicates that a previous process has not been shut down in a proper manner and continues to retain control of the port in question. This is a situation that arises frequently in the course of ordinary development work, and it need not be a cause for concern.
+
+A developer who wishes to resolve this matter might begin by identifying the particular process that is currently making use of the relevant port. Once that has been done, it would be sensible to make a note of the process identifier that has been returned by the system. It is also advisable for a developer to confirm that the process which has been identified is indeed the one that ought to be terminated. Once that confirmation has been obtained, the process in question would then be terminated through the use of the appropriate command.
+
+Once these steps have been carried out in the manner described, the port will once again become available for use by the application.
