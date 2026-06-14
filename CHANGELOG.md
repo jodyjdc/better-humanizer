@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.0 — 2026-06-14
+
+Sprint 1 of the v2 roadmap: document-level awareness + a refreshed tell catalog.
+
+- **Discourse structure** in the scorer (`scripts/stylo.py`): `transition_density`
+  (sentence-opening connective overuse), `structural_opener_rate` (thesis/summary
+  scaffolds), and `paragraph_cv` (uniform paragraphs = machine-like). One-tailed,
+  calibrated asymmetrically, excluded from the hard outlier veto, and folded into
+  `stylo_distance` via `DISCOURSE_WEIGHT`.
+- **Enriched tell catalog** (`lexicons/ai_tells.json`): post-2023 LLMisms —
+  `transitional_overuse`, `era_framing`, `structural_formulas`,
+  `hollow_affirmatives`, plus extended `ai_vocabulary` ("shed light on",
+  "pave the way for", "state-of-the-art", "game-changing", "cutting-edge", ...).
+  Cross-entry duplicate terms de-duplicated so no span is double-counted.
+- **Recalibrated** all three registers; the transition-opener ceiling is itself
+  register-specific (0.19 / 0.63 / 0.08 spontaneous / scientific / literary). Blind
+  A/B eval holds with no regression: spontaneous 5/5, scientific 4/4, literary 4/4.
+- 42 tests via `python3 tests/run.py`.
+
 ## 0.1.0 — 2026-06-12
 
 First release. A measured, self-improving humanizer that targets the real human

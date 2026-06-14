@@ -60,10 +60,10 @@ tolerance), so the tool no longer treats passive voice or formality as a defect.
 | sample | base_dist | pro_dist | closer-to-human |
 |--------|-----------|----------|-----------------|
 | 01-ml-health | 0.582 | **0.281** | **pro** |
-| 02-climate | 0.952 | **0.312** | **pro** |
+| 02-climate | 1.116 | **0.529** | **pro** |
 | 03-crispr | 0.747 | **0.208** | **pro** |
 | 04-quantum | 0.739 | **0.184** | **pro** |
-| **mean** | **0.755** | **0.246** | **pro 4/4** |
+| **mean** | **0.796** | **0.301** | **pro 4/4** |
 
 baseline = original-style rewrite (tells removed but register-flattened: shorter,
 active, hedges stripped). pro = tells removed while preserving the scientific
@@ -71,10 +71,11 @@ register. Pro wins 4/4.
 
 ### Register-awareness (the phase-2 proof)
 
-One scientific passage, scored under both registers:
+One scientific passage (`eval/out/scientific/01-ml-health.pro.txt`), scored under
+both registers:
 
-- under **scientific**: dist 0.332, **0** self-tells (in-band, recognized as human)
-- under **spontaneous**: dist 0.512, **2** self-tells (its uniform rhythm and zero
+- under **scientific**: dist 0.281, **0** self-tells (in-band, recognized as human)
+- under **spontaneous**: dist 0.470, **2** self-tells (its uniform rhythm and zero
   contractions are wrongly flagged as over-correction)
 
 A single-register humanizer would "fix" the paper's passive voice and add
@@ -109,8 +110,20 @@ Bands from real human corpora; same scorer, three calibrations:
 | rhythm variation (cv) | 0.38–0.76 | 0.23–0.72 | 0.45–0.95 |
 | contractions | yes | ~0 | yes |
 | em-dash ceiling | 0.13 | 0.00 | **1.71** |
-| AI-tell tolerance | 0.21 | 0.61 | 0.19 |
+| AI-tell tolerance | 0.29 | 0.78 | 0.22 |
+| transition-opener ceiling | 0.19 | **0.63** | 0.08 |
 
 The em-dash row alone refutes a blanket ban: near-zero in science, ~13x higher in
 fiction. "Human" is not one thing, and a tool that pretends it is will damage two of
 these three registers.
+
+## Sprint 1: discourse structure + enriched tells
+
+The scorer now also measures document-level structure — sentence-opening transition
+density, thesis/summary-opener rate, and paragraph-length uniformity — and the tell
+catalog gained the post-2023 LLMisms (era framing, "first and foremost", hollow
+affirmatives, etc.). The transition-opener row above is itself register-specific:
+scientific abstracts open sentences with "Moreover/Thus" ~3x more than casual prose,
+and literary fiction least of all — so a blanket "never start with a connective" rule
+would mis-fire, exactly like the em-dash ban. After recalibrating all three registers
+on these features, the blind A/B eval holds with no regression: **pro 5/5 / 4/4 / 4/4**.

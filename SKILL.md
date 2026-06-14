@@ -56,7 +56,10 @@ For each candidate, gather two scorecards:
   ```bash
   python3 scripts/stylo.py <candidate-file> --register <register>
   ```
-  Read back `stylo_distance`, `self_tell_flags`, `stylo_outlier`, `features`.
+  Read back `stylo_distance`, `self_tell_flags`, `stylo_outlier`, `features`
+  (now including the discourse features `transition_density`,
+  `structural_opener_rate`, and `paragraph_cv` — high transition/opener rates and
+  a low paragraph_cv are document-level AI tells).
 - **Judge panel** (semantic): evaluate the candidate with all three lenses, filling
   the templates in `judges/`. In `detector.md` and `register.md`, substitute
   `{{REGISTER}}` and give the judge the register profile (`registers/<register>.md`)
@@ -93,7 +96,8 @@ Return:
 1. The final rewrite.
 2. A compact **scorecard**: `composite`, `judge_score` breakdown
    (`p_ai`/`register_fit`/`fidelity`), `stylo_distance`, tells removed vs. source,
-   `self_tell_flags` avoided, iterations used.
+   discourse status (transition/opener/paragraph_cv), `self_tell_flags` avoided,
+   iterations used.
 
 Do **not** run a "delete every em dash" post-pass. Over-correction is a tell; defer
 to the bands. Trust the scorecard, not a blanket ban.
@@ -107,9 +111,10 @@ runs as a subprocess so results are reproducible.
 
 ## Pattern reference
 
-The tell catalog is `lexicons/ai_tells.json` (33 patterns from Wikipedia's "Signs
-of AI writing", machine-readable). It is the single source of truth, shared by
-`stylo.py` and the judges. Do not re-list patterns inline.
+The tell catalog is `lexicons/ai_tells.json` (the Wikipedia "Signs of AI writing"
+patterns, machine-readable, plus post-2023 LLMisms: sentence-opening transition
+overuse, era framing, structural formulas, hollow affirmatives). It is the single
+source of truth, shared by `stylo.py` and the judges. Do not re-list patterns inline.
 
 ## Scope
 

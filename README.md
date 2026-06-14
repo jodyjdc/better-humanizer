@@ -13,7 +13,9 @@ pattern knowledge but adds the three things a static checklist can't do.
 1. **Measurement, not vibes.** A hybrid scorer rates every rewrite:
    - `scripts/stylo.py` — standard-library stylometrics (sentence-length
      burstiness, lexical diversity/MTLD, function-word fingerprint, punctuation
-     rates, tell counts) measured against a human reference band.
+     rates, tell counts, and document-level discourse structure — transition
+     overuse, thesis/summary openers, paragraph uniformity) measured against a
+     human reference band.
    - an LLM **judge panel** (`judges/`) — an adversarial detector lens, a
      register-fidelity lens, and a meaning-fidelity lens.
 2. **Register awareness.** "Human" is register-specific. Three registers ship:
