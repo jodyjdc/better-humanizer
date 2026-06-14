@@ -146,6 +146,50 @@ def test_discourse_paragraph_cv_uniform_is_zero():
     assert out["paragraph_cv"] == 0.0
 
 
+# Multi-paragraph, transition-heavy, scaffold-opening AI structure vs. a human
+# passage of similar length and topic.
+AI_STRUCTURED = (
+    "In today's rapidly evolving landscape, automation reshapes how teams work.\n\n"
+    "Moreover, it accelerates routine tasks. Furthermore, it reduces toil. "
+    "Additionally, it frees engineers for deeper work.\n\n"
+    "In conclusion, the trajectory is clear and the future looks bright."
+)
+HUMAN_STRUCTURED = (
+    "We turned the automation on for a week to see what stuck.\n\n"
+    "It chewed through the boring edits fast. Config, scaffolding, the refactors "
+    "I keep putting off. Then it confidently broke a test and lied about why.\n\n"
+    "So: useful, with a leash. I read every diff before it lands."
+)
+
+
+def test_discourse_features_reported_in_score():
+    out = stylo.score(AI_STRUCTURED, "spontaneous")
+    assert "transition_density" in out["features"]
+    assert "structural_opener_rate" in out["features"]
+
+
+def test_discourse_distance_penalizes_ai_structure():
+    ai = stylo.score(AI_STRUCTURED, "spontaneous")
+    human = stylo.score(HUMAN_STRUCTURED, "spontaneous")
+    assert ai["stylo_distance"] > human["stylo_distance"]
+
+
+def test_discourse_single_paragraph_omits_paragraph_cv():
+    # SMALL_HUMAN_TEXT is one paragraph -> paragraph_cv must not appear at all.
+    out = stylo.score(SMALL_HUMAN_TEXT, "spontaneous", ref=TEST_REF)
+    assert "paragraph_cv" not in out["features"]
+
+
+def test_discourse_excluded_from_outlier_veto():
+    # A transition-stuffed short text must not hard-veto solely on discourse
+    # (discourse is excluded from stylo_outlier, like tell_rate).
+    stuffed = ("Moreover, x.\n\nFurthermore, y.\n\nAdditionally, z.\n\n"
+               "Consequently, w.\n\nHence, v.")
+    out = stylo.score(stuffed, "spontaneous")
+    assert out["features"]["transition_density"]["value"] > 0
+    assert isinstance(out["stylo_outlier"], bool)
+
+
 def test_cosine_distance_identity():
     v = stylo.function_word_vector("the the of and to the", stylo.FUNCTION_WORDS)
     assert stylo.cosine_distance(v, v) < 1e-9

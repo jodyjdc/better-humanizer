@@ -337,6 +337,40 @@ TELL_WEIGHT = 0.05
 # itself a tell, so it must cost distance, not just show up as a side flag.
 SELF_TELL_WEIGHT = 0.1
 
+# Weight on discourse-structure overuse (transition flooding, uniform paragraphs,
+# thesis/summary scaffolds). Same role as TELL_WEIGHT but for document-level tells.
+DISCOURSE_WEIGHT = 0.05
+
+DISCOURSE_KEYS = ("transition_density", "structural_opener_rate", "paragraph_cv")
+
+# Fallback discourse bands per register, used until `make corpus` writes calibrated
+# ones into reference-stats.json. Directional: transition_density and
+# structural_opener_rate penalize ABOVE ceiling; paragraph_cv penalizes BELOW floor
+# (uniform = machine-like) and has no ceiling. "_default" covers not-yet-calibrated
+# registers (e.g. Sprint 2 additions).
+DEFAULT_DISCOURSE_BANDS = {
+    "_default": {
+        "transition_density": {"floor": 0.0, "ceiling": 3.0},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.08},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
+    "spontaneous": {
+        "transition_density": {"floor": 0.0, "ceiling": 2.5},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.08},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
+    "scientific": {
+        "transition_density": {"floor": 0.0, "ceiling": 4.5},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.15},
+        "paragraph_cv": {"floor": 0.25, "ceiling": None},
+    },
+    "literary": {
+        "transition_density": {"floor": 0.0, "ceiling": 2.0},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.06},
+        "paragraph_cv": {"floor": 0.40, "ceiling": None},
+    },
+}
+
 _LEXICON_CACHE = None
 
 
@@ -439,12 +473,49 @@ def score(text, register="spontaneous", ref=None):
     }
     tell_excess = max(0.0, tr - tr_ceiling)
 
+    # Discourse structure: one-tailed penalties, handled like tell_rate (separate
+    # term, appended to `features` AFTER the outlier veto so it never hard-vetoes).
+    disc = discourse(text)
+    reg_defaults = DEFAULT_DISCOURSE_BANDS.get(
+        register, DEFAULT_DISCOURSE_BANDS["_default"]
+    )
+    discourse_excess = 0.0
+    for name in DISCOURSE_KEYS:
+        val = disc.get(name)
+        if val is None:  # paragraph_cv on single-paragraph input: omit entirely
+            continue
+        band = bands.get(name) or reg_defaults[name]
+        floor = band.get("floor", 0.0)
+        ceiling = band.get("ceiling")
+        if name == "paragraph_cv":  # low = uniform = tell
+            width = floor or 1.0
+            if val < floor:
+                status, z = "below", (floor - val) / width
+                discourse_excess += z
+            else:
+                status, z = "in", 0.0
+        else:  # high = overuse = tell
+            if ceiling is not None and val > ceiling:
+                width = ceiling or 1.0
+                status, z = "above", (val - ceiling) / width
+                discourse_excess += z
+            else:
+                status, z = "in", 0.0
+        features[name] = {
+            "value": round(val, 4),
+            "floor": floor,
+            "ceiling": ceiling,
+            "status": status,
+            "z": round(z, 4),
+        }
+
     base = statistics.fmean(zs) if zs else 0.0
     stylo_distance = (
         base
         + fw_dist
         + TELL_WEIGHT * tell_excess
         + SELF_TELL_WEIGHT * len(self_tells)
+        + DISCOURSE_WEIGHT * discourse_excess
     )
 
     return {
