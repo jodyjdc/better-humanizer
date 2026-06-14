@@ -259,7 +259,7 @@ def discourse(text):
     - transition_density: sentence-opening connectives per 100 tokens (high = tell)
     - structural_opener_rate: fraction of sentences opening with a thesis/summary
       scaffold (high = tell)
-    - paragraph_cv: coefficient of variation of paragraph word-lengths
+    - paragraph_cv: coefficient of variation of paragraph token counts
       (low = uniform = tell); None for single-paragraph input
     """
     sents = split_sentences(text)

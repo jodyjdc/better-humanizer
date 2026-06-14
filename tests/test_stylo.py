@@ -133,6 +133,19 @@ def test_discourse_paragraph_cv_multi_is_number():
     assert out["paragraph_cv"] is not None and out["paragraph_cv"] > 0
 
 
+def test_discourse_structural_opener_word_boundary():
+    # "overall" must NOT match "overallocation" at a sentence start (boundary guard).
+    out = stylo.discourse("Overallocation of memory crashed the job last night.")
+    assert out["structural_opener_rate"] == 0.0
+
+
+def test_discourse_paragraph_cv_uniform_is_zero():
+    # Equal-length paragraphs -> cv 0.0 (the uniform-structure tell), not None.
+    text = "one two three four five.\n\nsix seven eight nine ten."
+    out = stylo.discourse(text)
+    assert out["paragraph_cv"] == 0.0
+
+
 def test_cosine_distance_identity():
     v = stylo.function_word_vector("the the of and to the", stylo.FUNCTION_WORDS)
     assert stylo.cosine_distance(v, v) < 1e-9
