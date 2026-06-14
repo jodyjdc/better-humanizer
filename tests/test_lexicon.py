@@ -55,3 +55,16 @@ def test_new_entry_regexes_fire():
     assert hits["era_framing"] >= 1
     assert hits["structural_formulas"] >= 1
     assert hits["hollow_affirmatives"] >= 1
+
+
+def test_anchored_regexes_do_not_fire_midsentence():
+    # The anchored regexes must fire ONLY at sentence start. Mid-sentence uses of
+    # these words are legitimate human prose and must NOT count as tells.
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / "scripts"))
+    import stylo
+    hits = stylo.tell_hits(
+        "We were absolutely right, and additionally we shipped it; indeed the "
+        "team felt certainly proud of course.", LEX)
+    assert hits["hollow_affirmatives"] == 0
+    assert hits["transitional_overuse"] == 0
