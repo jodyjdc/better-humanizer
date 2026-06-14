@@ -38,7 +38,7 @@
     "id": 7,
     "name": "ai_vocabulary",
     "category": "language",
-    "terms": ["delve", "align with", "enduring", "enhance", "fostering", "garner", "interplay", "intricate", "intricacies", "pivotal", "showcase", "tapestry", "testament", "underscore", "underscores", "valuable", "leverage", "seamless", "robust", "holistic", "nuanced", "myriad", "multifaceted", "realm", "navigate the", "in today's"],
+    "terms": ["delve", "align with", "enduring", "enhance", "fostering", "garner", "interplay", "intricate", "intricacies", "pivotal", "showcase", "tapestry", "testament", "underscore", "underscores", "valuable", "leverage", "seamless", "robust", "holistic", "nuanced", "myriad", "multifaceted", "realm", "navigate the", "in today's", "shed light on", "pave the way for", "state-of-the-art", "game-changing", "cutting-edge", "unpack", "deep dive", "at the forefront", "harness the power"],
     "regexes": []
   },
   {
@@ -138,5 +138,33 @@
     "category": "filler",
     "terms": [],
     "regexes": ["(?:^|[.?!\"]\\s+)(?:Honestly|Look|Real talk)[?,]", "(?:^|[.?!]\\s+)(?:Here's the thing|The thing is|Let's be honest)\\b"]
+  },
+  {
+    "id": 34,
+    "name": "transitional_overuse",
+    "category": "discourse",
+    "terms": [],
+    "regexes": ["(?:^|[.?!]\\s+)(?:Moreover|Furthermore|Additionally|Consequently|Notably|Importantly|Hence)\\b"]
+  },
+  {
+    "id": 35,
+    "name": "era_framing",
+    "category": "language",
+    "terms": ["in today's", "in an era of", "in the age of", "in the realm of", "in the world of", "in the rapidly evolving", "in this digital age"],
+    "regexes": []
+  },
+  {
+    "id": 36,
+    "name": "structural_formulas",
+    "category": "filler",
+    "terms": ["first and foremost", "last but not least", "let's explore", "let's unpack", "let's dive deeper", "to summarize", "without further ado", "the bottom line is"],
+    "regexes": []
+  },
+  {
+    "id": 37,
+    "name": "hollow_affirmatives",
+    "category": "communication",
+    "terms": [],
+    "regexes": ["(?:^|[.?!]\\s+)(?:Absolutely|Certainly|Indeed)[!,]", "(?:^|[.?!]\\s+)Great question[!.]", "(?:^|[.?!]\\s+)Of course[!,]"]
   }
 ]
