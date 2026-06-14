@@ -54,7 +54,19 @@
     },
     "tell_rate": {
       "floor": 0.0,
-      "ceiling": 0.1927
+      "ceiling": 0.2221
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.0823
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
     }
   },
   "function_word_vector": {
