@@ -43,6 +43,13 @@ CTX = _ssl_context()
 TAG_RE = re.compile(r"<[^>]+>")
 WS_RE = re.compile(r"\s+")
 SENT_RE = re.compile(r"[.!?]")
+# Markdown normalization (Stack Exchange answers etc. are markdown-heavy; left raw,
+# links/blockquotes/code/rules would corrupt the stylometry).
+MD_LINK_RE = re.compile(r"\[([^\]]+)\]\((?:[^)]+)\)")     # [anchor](url) -> anchor
+MD_RULE_RE = re.compile(r"(?m)^\s*(?:[-*_]\s*){3,}\s*$")  # --- *** ___ rules
+MD_BQ_RE = re.compile(r"(?m)^\s*>+\s?")                   # > blockquote markers
+CODE_RE = re.compile(r"`+([^`]*)`+")                      # `code` -> code
+URL_RE = re.compile(r"https?://\S+")                      # bare URLs
 
 # Human, pre-2022, license-clean sources per register. Only derived statistics
 # are committed; raw texts (corpus/<register>/raw/) are gitignored.
@@ -88,6 +95,11 @@ def fetch_rows(dataset, config, split, offset, length):
 def clean(text):
     text = html.unescape(text)
     text = TAG_RE.sub(" ", text)
+    text = MD_LINK_RE.sub(r"\1", text)   # [anchor](url) -> anchor
+    text = CODE_RE.sub(r"\1", text)      # `code` -> code
+    text = MD_RULE_RE.sub(" ", text)     # horizontal rules -> space
+    text = MD_BQ_RE.sub("", text)        # drop blockquote markers
+    text = URL_RE.sub(" ", text)         # drop bare URLs
     text = text.replace("\\n", " ").replace("\\'", "'")
     text = text.replace("``", '"').replace("''", '"')  # LaTeX-style quotes -> straight
     text = WS_RE.sub(" ", text)
