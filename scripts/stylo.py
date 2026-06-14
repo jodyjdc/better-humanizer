@@ -369,6 +369,29 @@ DEFAULT_DISCOURSE_BANDS = {
         "structural_opener_rate": {"floor": 0.0, "ceiling": 0.06},
         "paragraph_cv": {"floor": 0.40, "ceiling": None},
     },
+    # Sprint 2 registers. These mirror the calibrated bands now in each
+    # reference-stats.json (so score() uses the calibrated values; this is a
+    # register-shaped fallback for an uncalibrated/mid-refetch state).
+    "business": {
+        "transition_density": {"floor": 0.0, "ceiling": 0.54},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.05},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
+    "journalism": {
+        "transition_density": {"floor": 0.0, "ceiling": 0.05},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.02},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
+    "social-media": {
+        "transition_density": {"floor": 0.0, "ceiling": 0.10},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.05},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
+    "technical-docs": {
+        "transition_density": {"floor": 0.0, "ceiling": 0.30},
+        "structural_opener_rate": {"floor": 0.0, "ceiling": 0.05},
+        "paragraph_cv": {"floor": 0.35, "ceiling": None},
+    },
 }
 
 _LEXICON_CACHE = None
