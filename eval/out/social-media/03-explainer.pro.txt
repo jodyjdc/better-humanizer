@@ -1,0 +1,7 @@
+Ok so before you go buy a new router, hold on. Nine times out of ten it's not the router. It's where you put the thing.
+
+People shove it in a closet next to the modem, behind the TV, on the floor in the corner. And then they're shocked the wifi's bad in the bedroom upstairs. Of course it is. Walls eat the signal, floors eat it worse. Get it up high and somewhere central if you can. That alone fixes most people's problem.
+
+Other thing nobody does: there's two bands, 2.4 and 5GHz. The 5 one is way faster but doesn't reach as far. So for your laptop or your TV that's close-ish, use 5. Stick the smart plugs and whatever on 2.4.
+
+If you've done all that and it's still garbage, then fine, maybe look at a mesh setup or a new router. But honestly? Try moving it first. Costs nothing.
