@@ -48,7 +48,7 @@ SENT_RE = re.compile(r"[.!?]")
 MD_LINK_RE = re.compile(r"\[([^\]]+)\]\((?:[^)]+)\)")     # [anchor](url) -> anchor
 MD_RULE_RE = re.compile(r"(?m)^\s*(?:[-*_]\s*){3,}\s*$")  # --- *** ___ rules
 MD_BQ_RE = re.compile(r"(?m)^\s*>+\s?")                   # > blockquote markers
-CODE_RE = re.compile(r"`+([^`]*)`+")                      # `code` -> code
+CODE_RE = re.compile(r"`+([^`]+)`+")                      # `code` -> code (non-empty; leaves LaTeX `` quotes for normalization below)
 URL_RE = re.compile(r"https?://\S+")                      # bare URLs
 
 # Human, pre-2022, license-clean sources per register. Only derived statistics
