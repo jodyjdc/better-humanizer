@@ -25,6 +25,12 @@ measured successor to the original `humanizer` skill: same pattern knowledge (no
 in `lexicons/ai_tells.json`), plus measurement, register awareness, and
 anti-over-correction.
 
+**Platform note.** Claude Code loads this file as the `/humanizer-pro` skill. Codex
+users enter through [`AGENTS.md`](AGENTS.md), which maps the Claude Code tool names
+below (`Bash`, `Read`/`Write`/`Edit`, `AskUserQuestion`, `Workflow`) to their Codex
+equivalents. The loop itself is platform-agnostic and the scoring is a deterministic
+Python subprocess, so the result is identical on both.
+
 ## Inputs
 
 - `text`: the passage to humanize (the SOURCE).

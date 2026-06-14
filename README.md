@@ -8,6 +8,10 @@ It is the successor to [`blader/humanizer`](https://github.com/blader/humanizer)
 single static prompt that deletes 33 known AI "tells". humanizer-pro keeps that
 pattern knowledge but adds the three things a static checklist can't do.
 
+**Runs on both Claude Code and Codex.** Claude Code loads `SKILL.md` as the
+`/humanizer-pro` skill; Codex enters through `AGENTS.md`. Same loop, same
+deterministic Python scorer — identical results either way.
+
 ## The core idea
 
 1. **Measurement, not vibes.** A hybrid scorer rates every rewrite:
@@ -47,8 +51,10 @@ python3 scripts/fetch_corpus.py                       # pull IMDB+Yelp (pre-2022
 python3 scripts/build_reference.py --register spontaneous
 #   or drop your own *.txt under corpus/spontaneous/ and rerun build_reference.
 
-# Rewrite with the full loop (inside Claude Code / OpenCode):
-/humanizer-pro    # then paste text; see SKILL.md for the loop
+# Rewrite with the full loop:
+#   Claude Code / OpenCode:  /humanizer-pro   (loads SKILL.md)
+#   Codex:                   open the repo and ask to humanize  (AGENTS.md routes it)
+# Both follow the same loop; the scoring is a deterministic Python subprocess.
 
 # Prove it beats the original (blind A/B):
 python3 eval/run_eval.py --register spontaneous
