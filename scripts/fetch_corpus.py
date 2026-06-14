@@ -77,6 +77,33 @@ SOURCES = {
          "split": "train", "field": "story", "offsets": [0, 30000, 60000, 90000, 120000],
          "target": 120},
     ],
+    # Business prose: Enron emails (AESLC, Zhang & Tetreault 2019; emails ~2000).
+    "business": [
+        {"name": "aeslc", "dataset": "Yale-LILY/aeslc", "config": "default",
+         "split": "train", "field": "email_body",
+         "offsets": [0, 2000, 4000, 6000, 8000], "target": 120},
+    ],
+    # Journalism: CNN/DailyMail news articles (Hermann 2015 / See 2017, pre-2018).
+    # Long, multi-paragraph, structured lede, source attribution.
+    "journalism": [
+        {"name": "cnndm", "dataset": "abisee/cnn_dailymail", "config": "3.0.0",
+         "split": "train", "field": "article",
+         "offsets": [0, 5000, 10000, 15000], "target": 120},
+    ],
+    # Social media: Reddit posts (Webis-TLDR-17, Völske et al. 2017, pre-LLM).
+    # Informal, first-person; fragments and lowercase are HUMAN here.
+    "social-media": [
+        {"name": "reddit", "dataset": "webis/tldr-17", "config": "default",
+         "split": "train", "field": "content",
+         "offsets": [1000, 30000, 80000, 150000, 250000], "target": 120},
+    ],
+    # Technical docs: accepted Stack Exchange answers (lvwerra/stack-exchange-paired,
+    # pre-2021). Imperative, code-switching, lists. Markdown normalized by clean().
+    "technical-docs": [
+        {"name": "stackexchange", "dataset": "lvwerra/stack-exchange-paired",
+         "config": "default", "split": "train", "field": "response_j",
+         "offsets": [0, 10000, 25000, 50000], "target": 120},
+    ],
 }
 
 
