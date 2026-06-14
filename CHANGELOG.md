@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.3.0 — 2026-06-15
+
+Sprint 2 of the v2 roadmap: register expansion from 3 to 7.
+
+- **Four new registers**, each calibrated on 120 genuinely-human, pre-LLM texts:
+  **business** (Enron emails / AESLC), **journalism** (CNN/DailyMail articles),
+  **social-media** (Reddit / Webis-TLDR-17), **technical-docs** (Stack Exchange
+  answers). Same machinery — `registers/<name>.md` brief + calibrated
+  `corpus/<name>/` + the discourse/tell scorer.
+- **Markdown-aware `clean()`** (`scripts/fetch_corpus.py`): strips links (keeping
+  anchor text), inline code, blockquote markers, horizontal rules, and bare URLs —
+  needed so Stack Exchange answers don't corrupt the stylometry.
+- **Seven-register fingerprint**: contraction ceiling spans 0.00 (scientific) to
+  5.78 (business email); exclamation 0.07 (journalism) to 3.47 (spontaneous);
+  AI-tell tolerance 0.22 (literary) to 0.78 (scientific). Two empirical findings:
+  internal business email is conversational (not the formal-report stereotype), and
+  technical-docs has the widest sentence-length range (6–65).
+- **Blind A/B eval**: pro beats the register-blind baseline 12/12 on the new
+  registers (25/25 across all seven). `eval/REPORT.md` updated.
+- **Deferred**: academic-essay — every clean, dated, pre-LLM student-essay corpus on
+  the HF rows API is gated; it returns when a clean source is found.
+- **Known limitation**: `paragraph_cv` stays inert (HF sources are paragraph-flattened
+  and `clean()` collapses newlines); it works on real multi-paragraph user input but
+  isn't calibration-live yet.
+
 ## 0.2.0 — 2026-06-14
 
 Sprint 1 of the v2 roadmap: document-level awareness + a refreshed tell catalog.

@@ -100,22 +100,26 @@ imagery. Pro wins 4/4. Notably the flattened baseline (0.81 mean) scores **worse
 than the original AI purple prose (0.66 mean): flattening fiction is the maximal
 failure mode, not a fix.
 
-## Three-register fingerprint (the whole thesis in one table)
+## Seven-register fingerprint (the whole thesis in one table)
 
-Bands from real human corpora; same scorer, three calibrations:
+Bands from real human corpora; one scorer, seven calibrations (ceilings unless noted):
 
-| feature | spontaneous | scientific | literary |
-|---------|-------------|------------|----------|
-| sentence length (mean) | 10–26 | 16–33 | 8–20 |
-| rhythm variation (cv) | 0.38–0.76 | 0.23–0.72 | 0.45–0.95 |
-| contractions | yes | ~0 | yes |
-| em-dash ceiling | 0.13 | 0.00 | **1.71** |
-| AI-tell tolerance | 0.29 | 0.78 | 0.22 |
-| transition-opener ceiling | 0.19 | **0.63** | 0.08 |
+| feature | spontaneous | scientific | literary | business | journalism | social-media | technical-docs |
+|---------|---|---|---|---|---|---|---|
+| sentence length (mean) | 10–26 | 16–33 | 8–20 | 8–27 | 16–25 | 13–27 | 6–65 |
+| contraction ceiling | 4.34 | **0.00** | 4.96 | **5.78** | 3.10 | 4.54 | 3.06 |
+| em-dash ceiling | 0.13 | 0.00 | **1.71** | 0.53 | 1.19 | 0.10 | 0.85 |
+| exclamation ceiling | 3.47 | 0.00 | 2.00 | 1.15 | **0.07** | 0.67 | 1.62 |
+| transition-opener ceiling | 0.19 | **0.63** | 0.08 | 0.54 | **0.02** | 0.10 | 0.30 |
+| AI-tell tolerance | 0.29 | **0.78** | 0.22 | 0.40 | 0.29 | 0.43 | 0.75 |
 
-The em-dash row alone refutes a blanket ban: near-zero in science, ~13x higher in
-fiction. "Human" is not one thing, and a tool that pretends it is will damage two of
-these three registers.
+Every row has a wide spread and several invert. Contractions run from **0.00**
+(scientific — and zero is human there) to **5.78** (business email). Em dashes from
+0.00 to 1.71 (~13x). Exclamation from 0.07 (journalism is the unexcitable register)
+to 3.47. Transition-openers from 0.02 (news never says "Moreover,") to 0.63
+(scientific abstracts do). AI-vocabulary tolerance from 0.22 (literary) to 0.78
+(scientific). "Human" is not one thing — a one-size humanizer damages most of these
+seven registers, and the calibrated bands prevent that automatically.
 
 ## Sprint 1: discourse structure + enriched tells
 
@@ -129,8 +133,50 @@ would mis-fire, exactly like the em-dash ban. After recalibrating all three regi
 on these features, the blind A/B eval holds with no regression: **pro 5/5 / 4/4 / 4/4**.
 
 The third discourse feature, `paragraph_cv` (paragraph-length uniformity), is **inert
-for these three registers**: their corpora (reviews, abstracts, short stories) are
-overwhelmingly single-paragraph, so calibration yields a `0.0` floor and the feature
-never penalizes. It is wired and tested, and goes live for the long-form registers
-planned in Sprint 2 (journalism, academic-essay), where paragraph structure carries
-signal. Flagged here rather than left as a silent no-op.
+across all seven registers**: the HuggingFace source datasets deliver each text as a
+single field, and `fetch_corpus.clean()` collapses whitespace, so no corpus preserves
+blank-line paragraph breaks — calibration yields a `0.0` floor and the feature never
+penalizes (even journalism, expected to be multi-paragraph, flattens this way). It is
+wired and tested, and works on real multi-paragraph *input* the user supplies; making
+it live in *calibration* needs a paragraph-preserving fetch/clean path, deferred as
+its own change. Flagged here rather than left as a silent no-op.
+
+## Sprint 2: +4 registers (business, journalism, social-media, technical-docs)
+
+Same machinery, four more calibrations (120 human pre-LLM texts each: Enron emails,
+CNN/DailyMail articles, Reddit posts, Stack Exchange answers). Blind A/B, distance to
+the register's human band (lower is better); baseline = register-blind scrub,
+pro = register-faithful rewrite.
+
+| register | sample | base_dist | pro_dist | winner |
+|----------|--------|-----------|----------|--------|
+| business | 01-status | 0.469 | **0.229** | pro |
+| business | 02-vendor | 0.363 | **0.190** | pro |
+| business | 03-followup | 0.358 | **0.267** | pro |
+| journalism | 01-council | 0.811 | **0.102** | pro |
+| journalism | 02-earnings | 1.834 | **0.085** | pro |
+| journalism | 03-vaccine | 2.226 | **0.122** | pro |
+| social-media | 01-hottake | 0.511 | **0.243** | pro |
+| social-media | 02-anecdote | 0.469 | **0.181** | pro |
+| social-media | 03-explainer | 0.467 | **0.279** | pro |
+| technical-docs | 01-builderror | 0.269 | **0.185** | pro |
+| technical-docs | 02-cors | 0.251 | **0.185** | pro |
+| technical-docs | 03-killport | 0.296 | **0.212** | pro |
+
+**pro wins 12/12.** The journalism gap is the widest in the project — a chatty,
+de-attributed scrub of a news story (base up to 2.23) lands far outside the sober
+news band, while the register-faithful rewrite sits almost on it (0.09–0.12).
+
+### Register-awareness (the Sprint-2 proof)
+
+One social-media rewrite (`eval/out/social-media/01-hottake.pro.txt`), scored under
+two registers:
+
+- under **social-media**: dist **0.243** (in-band — its contractions and loose rhythm
+  are human here)
+- under **scientific**: dist **0.830** (3.4x worse — the same casual prose is out of
+  band for a paper)
+
+The bands do the adapting: nothing about the text changed, only the register it is
+judged against. A single-register tool would "fix" the Reddit post into something a
+scientist might write, destroying it.

@@ -118,11 +118,14 @@ source of truth, shared by `stylo.py` and the judges. Do not re-list patterns in
 
 ## Scope
 
-Registers available now: **spontaneous**, **scientific**, and **literary**, each
-with its own `registers/<name>.md` + calibrated `corpus/<name>/`. They behave very
-differently and that is the whole point ("human" is register-specific): scientific
-tolerates passive voice, hedging, and zero contractions; literary has ~13x the
-em-dash tolerance of casual prose and the highest rhythm variation, and there the
-main tell is *hollow* figuration, not its presence. Each new register reuses this
-exact machinery. The target is always the human distribution for the register,
-never a specific commercial detector.
+Registers available now (seven): **spontaneous**, **scientific**, **literary**,
+**business**, **journalism**, **social-media**, and **technical-docs**, each with its
+own `registers/<name>.md` + calibrated `corpus/<name>/`. They behave very differently
+and that is the whole point ("human" is register-specific): scientific tolerates
+passive voice, hedging, and zero contractions; business email and social-media run
+the highest contraction rates; journalism is sober (near-zero exclamation and
+sentence-opening connectives); technical-docs has the widest sentence-length range
+and high domain-vocabulary tolerance; literary has ~13x the em-dash tolerance of
+casual prose, where the main tell is *hollow* figuration, not its presence. Each new
+register reuses this exact machinery. The target is always the human distribution for
+the register, never a specific commercial detector.

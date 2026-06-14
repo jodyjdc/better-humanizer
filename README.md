@@ -18,13 +18,14 @@ pattern knowledge but adds the three things a static checklist can't do.
      human reference band.
    - an LLM **judge panel** (`judges/`) — an adversarial detector lens, a
      register-fidelity lens, and a meaning-fidelity lens.
-2. **Register awareness.** "Human" is register-specific. Three registers ship:
-   **spontaneous**, **scientific**, and **literary**, each with its own
-   `registers/<name>.md` + calibrated `corpus/<name>/`. They differ sharply:
-   scientific treats passive voice and zero contractions as human; literary
-   tolerates ~13x the em dashes of casual prose and the highest rhythm variation,
-   where the tell is *hollow* figuration, not its presence. Same machinery,
-   recalibrated per register.
+2. **Register awareness.** "Human" is register-specific. Seven registers ship:
+   **spontaneous**, **scientific**, **literary**, **business**, **journalism**,
+   **social-media**, and **technical-docs**, each with its own `registers/<name>.md`
+   + calibrated `corpus/<name>/`. They differ sharply: scientific treats passive
+   voice and zero contractions as human; social-media and Enron business email run
+   the *highest* contraction rates; journalism is the unexcitable register
+   (near-zero exclamation, almost no "Moreover"-style openers); literary tolerates
+   ~13x the em dashes of casual prose. Same machinery, recalibrated per register.
 3. **Anti-over-correction.** Every human band has a floor **and** a ceiling. Zero
    em dashes, flat sentence rhythm, or zero contractions get flagged as
    `self_tell_flags` — because over-laundered prose is its own tell. The original
@@ -71,10 +72,12 @@ python3 tests/run.py
 | Proof it works | trust | blind A/B eval harness |
 
 Against bands calibrated from real human text, humanizer-pro lands closer to the
-human distribution on **5/5** spontaneous, **4/4** scientific, and **4/4** literary
-samples — three registers with very different norms, same machinery. The em-dash
-ceiling alone runs from 0.00 (scientific) to 1.71 (literary), which is why a
-one-size humanizer damages most registers. See [`eval/REPORT.md`](eval/REPORT.md).
+human distribution on every sample across seven registers — **5/5** spontaneous,
+**4/4** scientific, **4/4** literary, and **3/3** each for business, journalism,
+social-media, and technical-docs (**25/25** total), same machinery throughout. The
+contraction ceiling alone runs from 0.00 (scientific — zero is human there) to 5.78
+(business email), and the em-dash ceiling from 0.00 to 1.71, which is why a one-size
+humanizer damages most registers. See [`eval/REPORT.md`](eval/REPORT.md).
 
 ## Explicit non-goal
 
