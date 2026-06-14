@@ -212,6 +212,74 @@ def rule_of_three(text):
     return len(RULE_OF_THREE_RE.findall(text))
 
 
+# --------------------------------------------------------------------------
+# Discourse structure (document-level tells)
+# --------------------------------------------------------------------------
+PARA_SPLIT_RE = re.compile(r"\n\s*\n+")
+
+# Connectives that read as an AI tell when they OPEN a sentence. Mid-sentence
+# use is legitimate and deliberately NOT counted.
+TRANSITION_OPENERS = (
+    "moreover", "furthermore", "additionally", "in addition", "consequently",
+    "hence", "thus", "therefore", "notably", "importantly", "ultimately",
+    "in conclusion",
+)
+
+# Thesis / summary scaffolds: a sentence that opens with one of these is doing
+# the "set up the essay" move LLMs overuse. ("in conclusion" intentionally also
+# appears above — it is both a transition and a summary scaffold.)
+STRUCTURAL_OPENERS = (
+    "in this analysis", "in this article", "in this essay", "in today's",
+    "in an era", "in the age of", "in the realm of", "in the world of",
+    "this paper", "this essay", "this article", "to summarize", "in summary",
+    "in conclusion", "overall", "first and foremost", "last but not least",
+)
+
+
+def _paragraphs(text):
+    """Paragraphs split on blank lines; drop tokenless fragments."""
+    return [p for p in PARA_SPLIT_RE.split(text.strip()) if WORD_RE.search(p)]
+
+
+def _sentence_starts_with(sentence, phrases):
+    """True if `sentence` begins with any phrase in `phrases`, case-insensitively,
+    ignoring leading quotes/brackets, on a word boundary (so 'overall' does not
+    match 'overallocation')."""
+    s = sentence.lstrip(" \t\"'“‘(").lower()
+    for p in phrases:
+        if s.startswith(p) and (len(s) == len(p) or not s[len(p)].isalpha()):
+            return True
+    return False
+
+
+def discourse(text):
+    """Document-level discourse features. Each is one-tailed (a tell in a single
+    direction); paragraph_cv is None when the text has fewer than two paragraphs.
+
+    - transition_density: sentence-opening connectives per 100 tokens (high = tell)
+    - structural_opener_rate: fraction of sentences opening with a thesis/summary
+      scaffold (high = tell)
+    - paragraph_cv: coefficient of variation of paragraph word-lengths
+      (low = uniform = tell); None for single-paragraph input
+    """
+    sents = split_sentences(text)
+    n_tok = len(tokenize(text)) or 1
+    trans = sum(1 for s in sents if _sentence_starts_with(s, TRANSITION_OPENERS))
+    struct = sum(1 for s in sents if _sentence_starts_with(s, STRUCTURAL_OPENERS))
+    paras = _paragraphs(text)
+    if len(paras) >= 2:
+        plens = [len(tokenize(p)) for p in paras]
+        pmean = statistics.fmean(plens)
+        pcv = (statistics.pstdev(plens) / pmean) if pmean else 0.0
+    else:
+        pcv = None
+    return {
+        "transition_density": trans / n_tok * 100,
+        "structural_opener_rate": (struct / len(sents)) if sents else 0.0,
+        "paragraph_cv": pcv,
+    }
+
+
 def tell_rate(text, lexicon=None):
     """AI tell-lexicon hits per 100 tokens. Tolerance is register-specific:
     real scientific prose uses 'crucial/underscore/interplay' far more than a

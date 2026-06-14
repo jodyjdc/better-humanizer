@@ -95,6 +95,44 @@ def test_rule_of_three():
     assert stylo.rule_of_three("speed, quality, and adoption matter") >= 1
 
 
+# --- Sprint 1: discourse structure ---
+
+def test_discourse_transition_opener_counted():
+    # Sentence-initial transitions are the tell; one opener over a short text.
+    out = stylo.discourse("Moreover, the system improved. The team shipped it.")
+    assert out["transition_density"] > 0
+
+
+def test_discourse_midsentence_transition_not_counted():
+    # "thus"/"therefore" used mid-sentence is legitimate, not a tell.
+    out = stylo.discourse("The build was green and thus we shipped the change.")
+    assert out["transition_density"] == 0
+
+
+def test_discourse_structural_opener_rate():
+    two = "In today's world, things change. The dog slept by the fire all day."
+    out = stylo.discourse(two)
+    # One of two sentences opens with a thesis scaffold -> 0.5.
+    assert abs(out["structural_opener_rate"] - 0.5) < 1e-9
+
+
+def test_discourse_no_structural_opener():
+    out = stylo.discourse("The dog slept. The cat watched. Rain fell outside.")
+    assert out["structural_opener_rate"] == 0.0
+
+
+def test_discourse_paragraph_cv_single_is_none():
+    out = stylo.discourse("Just one paragraph here, no blank line breaks at all.")
+    assert out["paragraph_cv"] is None
+
+
+def test_discourse_paragraph_cv_multi_is_number():
+    text = "Short one.\n\nA considerably longer paragraph that runs on for a while "
+    text += "with several more words than the first.\n\nMid length here, roughly."
+    out = stylo.discourse(text)
+    assert out["paragraph_cv"] is not None and out["paragraph_cv"] > 0
+
+
 def test_cosine_distance_identity():
     v = stylo.function_word_vector("the the of and to the", stylo.FUNCTION_WORDS)
     assert stylo.cosine_distance(v, v) < 1e-9
