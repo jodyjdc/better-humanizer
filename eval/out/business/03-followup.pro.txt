@@ -1,0 +1,12 @@
+Hi everyone,
+
+Thanks for the good discussion today. Here is a quick recap of where we landed and who is taking what.
+
+The main thing we agreed on: the onboarding workflow needs work, and fixing it should make things a lot smoother for customers. You all did a great job pinning down where it breaks down for new accounts.
+
+On the action items, Sarah is going to rewrite the documentation and get the knowledge base into proper shape. Tom is reaching out to a few key stakeholders for more feedback before we lock anything in.
+
+I'll pull all of this together and we can check on progress at next week's sync. Appreciate everyone's input today, this was a productive hour.
+
+Cheers,
+Alex

@@ -1,0 +1,12 @@
+Hi team,
+
+Quick status update on the Q3 migration.
+
+Good progress this week. The data pipeline is optimized and we're ready to move into the next phase. We've cleared most of the workstreams.
+
+A couple of things are still open. The staging environment validation is pending, and we're waiting on final sign-off from the security team. I'll chase both down and let you know as soon as they clear.
+
+Thanks for all the work on this. Happy to walk through any of it.
+
+Best,
+Dana
