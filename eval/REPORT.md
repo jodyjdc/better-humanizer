@@ -127,3 +127,10 @@ scientific abstracts open sentences with "Moreover/Thus" ~3x more than casual pr
 and literary fiction least of all — so a blanket "never start with a connective" rule
 would mis-fire, exactly like the em-dash ban. After recalibrating all three registers
 on these features, the blind A/B eval holds with no regression: **pro 5/5 / 4/4 / 4/4**.
+
+The third discourse feature, `paragraph_cv` (paragraph-length uniformity), is **inert
+for these three registers**: their corpora (reviews, abstracts, short stories) are
+overwhelmingly single-paragraph, so calibration yields a `0.0` floor and the feature
+never penalizes. It is wired and tested, and goes live for the long-form registers
+planned in Sprint 2 (journalism, academic-essay), where paragraph structure carries
+signal. Flagged here rather than left as a silent no-op.

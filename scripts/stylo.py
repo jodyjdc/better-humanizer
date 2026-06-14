@@ -475,6 +475,10 @@ def score(text, register="spontaneous", ref=None):
 
     # Discourse structure: one-tailed penalties, handled like tell_rate (separate
     # term, appended to `features` AFTER the outlier veto so it never hard-vetoes).
+    # Note: sentence-opening connectives are intentionally caught both here
+    # (transition_density) and by the `transitional_overuse` lexicon entry via
+    # tell_excess; both terms are independently calibrated and ceiling-gated, so the
+    # overlap is a mild, deliberate reinforcement, not a calibration error.
     disc = discourse(text)
     reg_defaults = DEFAULT_DISCOURSE_BANDS.get(
         register, DEFAULT_DISCOURSE_BANDS["_default"]
