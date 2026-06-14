@@ -40,6 +40,25 @@ def aggregate(texts):
     tr_sd = statistics.pstdev(tr_vals) if len(tr_vals) > 1 else 0.0
     bands["tell_rate"] = {"floor": 0.0, "ceiling": round(tr_mean + 1.5 * tr_sd, 4)}
 
+    # Discourse structure: one-tailed, so calibrated asymmetrically here and stored
+    # under `bands` but consumed by score()'s dedicated discourse block (like
+    # tell_rate), NOT by the symmetric FEATURE_KEYS loop above.
+    disc_rows = [stylo.discourse(t) for t in texts]
+    for key in ("transition_density", "structural_opener_rate"):
+        vals = [r[key] for r in disc_rows]
+        m = statistics.fmean(vals)
+        sd = statistics.pstdev(vals) if len(vals) > 1 else 0.0
+        bands[key] = {"floor": 0.0, "ceiling": round(m + 1.5 * sd, 4)}
+    # paragraph_cv: low tail is the tell; floor only, over multi-paragraph texts.
+    pcv = [r["paragraph_cv"] for r in disc_rows if r["paragraph_cv"] is not None]
+    if pcv:
+        m = statistics.fmean(pcv)
+        sd = statistics.pstdev(pcv) if len(pcv) > 1 else 0.0
+        bands["paragraph_cv"] = {"floor": round(max(0.0, m - 1.5 * sd), 4),
+                                 "ceiling": None}
+    else:
+        bands["paragraph_cv"] = {"floor": 0.0, "ceiling": None}
+
     fw_rows = [stylo.function_word_vector(t) for t in texts]
     keys = set().union(*fw_rows) if fw_rows else set()
     fw = {

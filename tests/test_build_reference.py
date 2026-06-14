@@ -50,3 +50,23 @@ def test_build_empty_corpus_is_noop():
     assert out.returncode == 0
     assert not (tmp / "stats.json").exists()  # nothing written
     assert "warning" in out.stderr.lower()
+
+
+def test_aggregate_emits_discourse_bands():
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / "scripts"))
+    import build_reference
+    texts = [
+        "A short line.\n\nA longer paragraph with rather more words than the first one.",
+        "Moreover, this opens with a transition. The next sentence is plain though.",
+        "In today's world we begin. Then the story wanders somewhere quieter.",
+    ]
+    bands, _fw = build_reference.aggregate(texts)
+    for key in ("transition_density", "structural_opener_rate", "paragraph_cv"):
+        assert key in bands
+    # transition_density / structural_opener_rate are high-tail: floor pinned to 0.
+    assert bands["transition_density"]["floor"] == 0.0
+    assert bands["structural_opener_rate"]["floor"] == 0.0
+    # paragraph_cv is low-tail: a floor, no ceiling.
+    assert bands["paragraph_cv"]["ceiling"] is None
+    assert bands["paragraph_cv"]["floor"] >= 0.0
