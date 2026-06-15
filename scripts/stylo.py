@@ -133,6 +133,40 @@ def lexical(text):
 
 
 # --------------------------------------------------------------------------
+# Readability (Flesch-Kincaid grade) — the expertise axis
+# --------------------------------------------------------------------------
+_VOWELS = "aeiouy"
+
+
+def _count_syllables(word):
+    """Heuristic syllable count: vowel groups, with the trailing-silent-e rule
+    (but '-le' endings keep their syllable: table -> 2, cake -> 1)."""
+    word = word.lower()
+    if not word:
+        return 0
+    count, prev_vowel = 0, False
+    for ch in word:
+        is_v = ch in _VOWELS
+        if is_v and not prev_vowel:
+            count += 1
+        prev_vowel = is_v
+    if word.endswith("e") and not word.endswith("le") and count > 1:
+        count -= 1
+    return max(1, count)
+
+
+def flesch_kincaid_grade(text):
+    """Flesch-Kincaid grade level: higher = more advanced/complex prose.
+    The standard readability index; here it is the measured expertise axis."""
+    sents = split_sentences(text)
+    words = tokenize(text)
+    if not sents or not words:
+        return 0.0
+    syllables = sum(_count_syllables(w) for w in words)
+    return 0.39 * (len(words) / len(sents)) + 11.8 * (syllables / len(words)) - 15.59
+
+
+# --------------------------------------------------------------------------
 # Punctuation, structure, contractions
 # --------------------------------------------------------------------------
 def _per_100_tokens(count, text):
