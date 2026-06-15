@@ -9,3 +9,7 @@ dist/
 # Raw reference corpus: licensed / not ours to redistribute. Reproducible via
 # scripts/fetch_corpus.py. Only the derived reference-stats.json is committed.
 corpus/*/raw/
+
+# Personal voice samples: user data, not ours to commit. Calibrate locally via
+# scripts/build_reference.py --voice-sample.
+voices/

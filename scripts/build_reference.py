@@ -77,12 +77,76 @@ def expertise_tiers(texts):
     return graded[:third], graded[-third:]
 
 
+def _blend(voice_bands, voice_fw, reg_bands, reg_fw, w):
+    """Per-feature weighted blend of two band-sets: w*voice + (1-w)*register.
+    None edges (e.g. paragraph_cv ceiling) are preserved, not averaged."""
+    bands = {}
+    for key in set(voice_bands) | set(reg_bands):
+        v, r = voice_bands.get(key), reg_bands.get(key)
+        if v is None:
+            bands[key] = r
+        elif r is None:
+            bands[key] = v
+        else:
+            out = {}
+            for edge in ("floor", "ceiling"):
+                a, b = v.get(edge), r.get(edge)
+                out[edge] = a if (a is None or b is None) else round(w * a + (1 - w) * b, 4)
+            bands[key] = out
+    keys = set(voice_fw) | set(reg_fw)
+    fw = {k: round(w * voice_fw.get(k, 0.0) + (1 - w) * reg_fw.get(k, 0.0), 6)
+          for k in sorted(keys)}
+    return bands, fw
+
+
+def _build_voice(args):
+    """Calibrate a personal voice band-set, blending with a register fallback when
+    the sample is too small to stand on its own."""
+    vdir = pathlib.Path(args.voice_sample)
+    files = sorted(vdir.glob("*.txt"))
+    if not files:
+        print(f"no .txt in {vdir}", file=sys.stderr)
+        return 1
+    texts = [f.read_text(encoding="utf-8") for f in files]
+    words = sum(len(stylo.tokenize(t)) for t in texts)
+    v_bands, v_fw = aggregate(texts)
+    w = min(1.0, words / 1500)
+    if w < 1.0:
+        reg = stylo.load_reference(args.register)
+        v_bands, v_fw = _blend(v_bands, v_fw, reg["bands"],
+                               reg.get("function_word_vector", {}), w)
+        print(f"warning: voice sample is {words} words (< 1500); blended with "
+              f"'{args.register}' at weight {round(w, 3)} (bands will be approximate)",
+              file=sys.stderr)
+    out_root = pathlib.Path(args.out_root) if args.out_root else (stylo.ROOT / "voices")
+    out_path = out_root / args.label / "reference-stats.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    stats = {
+        "register": f"voice:{args.label}",
+        "calibrated": True,
+        "n_texts": len(files),
+        "voice_blend_weight": round(w, 4),
+        "note": f"Voice '{args.label}' from {len(files)} texts ({words} words).",
+        "bands": v_bands,
+        "function_word_vector": v_fw,
+    }
+    out_path.write_text(json.dumps(stats, indent=2, ensure_ascii=False) + "\n")
+    print(f"wrote {out_path} (weight {round(w, 3)})")
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--register", default="spontaneous")
     ap.add_argument("--corpus-root", default=str(stylo.ROOT / "corpus"))
     ap.add_argument("--out", default=None)
+    ap.add_argument("--voice-sample", default=None, help="dir of *.txt to calibrate a voice")
+    ap.add_argument("--label", default="me", help="voice label (output subdir)")
+    ap.add_argument("--out-root", default=None, help="root dir for voice output (test hook)")
     args = ap.parse_args(argv)
+
+    if args.voice_sample:
+        return _build_voice(args)
 
     reg_dir = pathlib.Path(args.corpus_root) / args.register
     files = sorted(reg_dir.rglob("*.txt"))  # includes raw/ subdir of fetched texts
