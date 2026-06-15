@@ -227,17 +227,29 @@ def _term_pattern(term):
     return r"(?<!\w)" + re.escape(term.lower()) + r"(?!\w)"
 
 
-def tell_hits(text, lexicon):
-    """Count occurrences of each lexicon entry (terms + regexes) by entry name."""
+def tell_hits(text, lexicon, allow=None, deny=None):
+    """Count occurrences of each lexicon entry (terms + regexes) by entry name.
+
+    `allow` is a set of lowercased terms NOT to count (a persona legitimately uses
+    them); `deny` is a list of extra lowercased terms counted under a synthetic
+    'persona_deny' entry. Both default to off, so existing callers are unaffected.
+    """
+    allow = allow or set()
     low = text.lower()
     out = {}
     for entry in lexicon:
         count = 0
         for term in entry.get("terms", []):
+            if term.lower() in allow:
+                continue
             count += len(re.findall(_term_pattern(term), low))
         for rx in entry.get("regexes", []):
             count += len(re.findall(rx, text, flags=re.IGNORECASE | re.MULTILINE))
         out[entry["name"]] = count
+    if deny:
+        out["persona_deny"] = sum(
+            len(re.findall(_term_pattern(t), low)) for t in deny
+        )
     return out
 
 
@@ -480,9 +492,11 @@ def _extract_features(text):
     }
 
 
-def score(text, register="spontaneous", ref=None):
+def score(text, register="spontaneous", ref=None, allow=None, deny=None):
     """Score text against the human band for a register.
 
+    `allow`/`deny` are optional persona lexicon overrides threaded into the tell
+    count (see tell_hits); both default to off, so existing callers are unaffected.
     Returns per-feature status/z, raw tell counts, self-tell flags (over-correction),
     a composite stylometric distance, and a hard-outlier veto flag.
     """
@@ -531,7 +545,7 @@ def score(text, register="spontaneous", ref=None):
     # (which legitimately uses "crucial/underscore/interplay") is not punished for
     # vocabulary a blog would never use. Ceiling is calibrated per register; falls
     # back to a strict 0.5 when the corpus has not measured it.
-    tells = tell_hits(text, _load_lexicon())
+    tells = tell_hits(text, _load_lexicon(), allow=allow, deny=deny)
     n_tok = len(tokenize(text)) or 1
     tr = sum(tells.values()) / n_tok * 100
     tr_ceiling = bands.get("tell_rate", {}).get("ceiling", 0.5)
