@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>humanizer-pro — is your text in the human band?</title>
+<meta name="description" content="Paste text and score it against the real human distribution for its register — the same deterministic stylometric scorer as scripts/stylo.py, running in your browser.">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel-2:#1c2230; --line:#2a3340;
+    --ink:#e6edf3; --ink-2:#9aa7b4; --accent:#3fb950; --accent-2:#58a6ff;
+    --warn:#d29922; --bad:#f85149; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    background-image:radial-gradient(circle at 50% -10%, rgba(63,185,80,.08), transparent 55%);}
+  .wrap{max-width:920px;margin:0 auto;padding:40px 22px 80px}
+  header h1{font-size:clamp(26px,4vw,40px);margin:0 0 6px;letter-spacing:-.5px}
+  header h1 .pro{color:var(--accent)}
+  header p{color:var(--ink-2);margin:0 0 4px;font-size:16px}
+  header .sub{font-size:13px;color:var(--ink-2)}
+  header code{font-family:var(--mono);color:var(--accent-2);font-size:.92em}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:22px}
+  .regs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .reg{font:500 13px/1 var(--sans);padding:8px 12px;border-radius:999px;border:1px solid var(--line);
+    background:var(--panel-2);color:var(--ink-2);cursor:pointer;transition:.15s}
+  .reg:hover{color:var(--ink)}
+  .reg.active{background:var(--accent);color:#04240f;border-color:var(--accent);font-weight:600}
+  textarea{width:100%;min-height:180px;resize:vertical;background:var(--bg);color:var(--ink);
+    border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);font-size:13.5px;line-height:1.6}
+  textarea:focus{outline:none;border-color:var(--accent-2)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .btn{font:600 13px/1 var(--sans);padding:11px 18px;border-radius:8px;cursor:pointer;border:1px solid var(--line)}
+  .btn-go{background:var(--accent);color:#04240f;border-color:var(--accent)}
+  .btn-go:hover{filter:brightness(1.08)}
+  .btn-ghost{background:transparent;color:var(--ink-2)}
+  .btn-ghost:hover{color:var(--ink)}
+  .muted{color:var(--ink-2);font-size:12.5px}
+  /* results */
+  #out{display:none}
+  .verdict{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .dist{font-family:var(--mono);font-size:54px;line-height:1;font-weight:600}
+  .chip{font:600 12px/1 var(--sans);padding:7px 12px;border-radius:999px;letter-spacing:.3px}
+  .chip.good{background:rgba(63,185,80,.15);color:var(--accent);border:1px solid rgba(63,185,80,.4)}
+  .chip.warn{background:rgba(210,153,34,.15);color:var(--warn);border:1px solid rgba(210,153,34,.4)}
+  .chip.bad{background:rgba(248,81,73,.15);color:var(--bad);border:1px solid rgba(248,81,73,.4)}
+  .summary{color:var(--ink-2);margin:12px 0 4px;font-size:14px}
+  h3{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-2);margin:24px 0 12px;font-weight:600}
+  .feat{margin:9px 0}
+  .feat .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+  .feat .name{font-family:var(--mono);color:var(--ink)}
+  .feat .val{font-family:var(--mono);color:var(--ink-2)}
+  .track{position:relative;height:8px;background:var(--panel-2);border-radius:5px;overflow:hidden}
+  .band{position:absolute;top:0;bottom:0;background:rgba(63,185,80,.25);border-left:1px solid var(--accent);border-right:1px solid var(--accent)}
+  .mark{position:absolute;top:-3px;width:3px;height:14px;border-radius:2px;background:var(--ink)}
+  .mark.out{background:var(--bad)}
+  .tags{display:flex;flex-wrap:wrap;gap:7px}
+  .tag{font-family:var(--mono);font-size:11.5px;padding:5px 9px;border-radius:6px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2)}
+  .tag b{color:var(--bad);font-weight:600}
+  footer{margin-top:34px;color:var(--ink-2);font-size:12.5px;text-align:center;line-height:1.7}
+  footer a{color:var(--accent-2);text-decoration:none}
+  .note{font-size:12px;color:var(--ink-2);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>humanizer<span class="pro">-pro</span> · human-band check</h1>
+    <p>Paste text. See how far it sits from the <strong>real human distribution</strong> for its register.</p>
+    <p class="sub">The exact same deterministic scorer as <code>scripts/stylo.py</code> — ported to JS and verified to match to 4 decimals. Runs entirely in your browser; nothing is uploaded.</p>
+  </header>
+
+  <div class="card">
+    <div class="regs" id="regs"></div>
+    <textarea id="text" placeholder="Paste a paragraph of AI-sounding (or human) text here…"></textarea>
+    <div class="row">
+      <button class="btn btn-go" id="go">Score it</button>
+      <button class="btn btn-ghost" id="example">Load example</button>
+      <span class="muted" id="reg-note"></span>
+    </div>
+  </div>
+
+  <div class="card" id="out">
+    <div class="verdict">
+      <div class="dist" id="dist">—</div>
+      <div>
+        <div id="chips"></div>
+        <div class="summary" id="summary"></div>
+      </div>
+    </div>
+
+    <h3>Stylometric features vs the human band</h3>
+    <div id="feats"></div>
+
+    <div id="selfwrap" style="display:none">
+      <h3>Over-correction self-tells <span class="muted" style="text-transform:none;letter-spacing:0">(scrubbed below a human floor — the original humanizer's failure mode)</span></h3>
+      <div class="tags" id="selftells"></div>
+    </div>
+
+    <div id="tellwrap" style="display:none">
+      <h3>AI tell-lexicon hits</h3>
+      <div class="tags" id="tells"></div>
+    </div>
+
+    <p class="note">Distance ≤ 0.75 ≈ comfortably inside the human band (a tunable editorial heuristic, not a detector score). An <b>outlier</b> is a hard flag — a feature sits &gt;3 bands outside the human range. Defeating commercial AI detectors is an explicit non-goal.</p>
+  </div>
+
+  <footer>
+    <a href="https://github.com/jodyjdc/better-humanizer">github.com/jodyjdc/better-humanizer</a>
+    · same scorer as <code>scripts/stylo.py</code> · for the full rewrite loop run <code>/humanizer-pro</code> in Claude Code
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script src="score.js"></script>
+<script>
+(function(){
+  var D = globalThis.HP_DATA;
+  var REGS = Object.keys(D.registers);
+  var current = REGS.indexOf("literary") >= 0 ? "literary" : REGS[0];
+  var exIdx = 0;
+
+  var regsEl = document.getElementById("regs");
+  REGS.forEach(function(r){
+    var b = document.createElement("button");
+    b.className = "reg" + (r===current?" active":"");
+    b.textContent = r;
+    b.onclick = function(){ current=r; [].forEach.call(regsEl.children,function(c){c.classList.toggle("active",c.textContent===r);}); regNote(); };
+    regsEl.appendChild(b);
+  });
+  function regNote(){
+    var info = D.registers[current];
+    document.getElementById("reg-note").textContent = info.calibrated ? ("register calibrated from " + (info.n_texts||"real") + " human texts") : "register (uncalibrated)";
+  }
+  regNote();
+
+  document.getElementById("example").onclick = function(){
+    var keys = Object.keys(D.examples);
+    // prefer the current register's example; else cycle
+    var t = D.examples[current];
+    if(!t){ var k = keys[exIdx % keys.length]; exIdx++; t = D.examples[k]; current = k;
+      [].forEach.call(regsEl.children,function(c){c.classList.toggle("active",c.textContent===current);}); regNote(); }
+    document.getElementById("text").value = t;
+  };
+
+  function pct(x){ return Math.max(0, Math.min(100, x)); }
+  function bar(f){
+    // map the floor..ceiling band onto the middle 70% of the track, value relative to it
+    var floor=f.floor, ceil=f.ceiling;
+    if(ceil==null){ ceil = floor + (Math.abs(f.value-floor)||1)*2; }
+    var span = (ceil-floor)||1;
+    var lo = floor - span*0.5, hi = ceil + span*0.5, full=(hi-lo)||1;
+    var bandL = (floor-lo)/full*100, bandW=(ceil-floor)/full*100;
+    var mark = (f.value-lo)/full*100;
+    var out = f.status!=="in";
+    return '<div class="track"><div class="band" style="left:'+pct(bandL)+'%;width:'+pct(bandW)+'%"></div>'+
+           '<div class="mark'+(out?" out":"")+'" style="left:'+pct(mark)+'%"></div></div>';
+  }
+
+  document.getElementById("go").onclick = function(){
+    var text = document.getElementById("text").value.trim();
+    if(!text){ return; }
+    var r = HPScore.score(text, current);
+    document.getElementById("out").style.display = "block";
+
+    var dist = r.stylo_distance;
+    document.getElementById("dist").textContent = dist.toFixed(3);
+    var inBand = !r.stylo_outlier && dist <= 0.75;
+    var cls = r.stylo_outlier ? "bad" : (dist<=0.75 ? "good" : "warn");
+    document.getElementById("dist").style.color = cls==="good"?"var(--accent)":(cls==="warn"?"var(--warn)":"var(--bad)");
+    var chips = '<span class="chip '+cls+'">'+(inBand?"in human band":(r.stylo_outlier?"outlier — hard flag":"outside band"))+'</span>';
+    if(r.stylo_outlier) chips += ' <span class="chip bad">outlier</span>';
+    document.getElementById("chips").innerHTML = chips;
+
+    var nTell = Object.keys(r.tells).reduce(function(a,k){return a+r.tells[k];},0);
+    document.getElementById("summary").textContent =
+      "register: "+r.register+"  ·  distance to human band: "+dist.toFixed(3)+
+      "  ·  over-correction self-tells: "+r.self_tell_flags.length+"  ·  AI-tell hits: "+nTell;
+
+    // features sorted by |z| (problems first)
+    var names = Object.keys(r.features).sort(function(a,b){ return Math.abs(r.features[b].z)-Math.abs(r.features[a].z); });
+    var html = "";
+    names.forEach(function(n){
+      var f = r.features[n];
+      var band = f.ceiling==null ? ("floor "+f.floor) : (f.floor.toFixed? f.floor.toFixed(2):f.floor)+"–"+(f.ceiling.toFixed?f.ceiling.toFixed(2):f.ceiling);
+      var statusColor = f.status==="in"?"var(--ink-2)":"var(--bad)";
+      html += '<div class="feat"><div class="top"><span class="name">'+n+'</span>'+
+        '<span class="val">'+ (typeof f.value==="number"? f.value.toFixed(2):f.value) +
+        ' <span style="color:'+statusColor+'">['+f.status+']</span> <span style="opacity:.6">band '+band+'</span></span></div>'+
+        bar(f)+'</div>';
+    });
+    document.getElementById("feats").innerHTML = html;
+
+    var stEl = document.getElementById("selftells");
+    if(r.self_tell_flags.length){ document.getElementById("selfwrap").style.display="block";
+      stEl.innerHTML = r.self_tell_flags.map(function(s){return '<span class="tag"><b>'+s+'</b></span>';}).join(""); }
+    else document.getElementById("selfwrap").style.display="none";
+
+    var hits = Object.keys(r.tells).filter(function(k){return r.tells[k]>0;}).sort(function(a,b){return r.tells[b]-r.tells[a];});
+    var tw = document.getElementById("tellwrap");
+    if(hits.length){ tw.style.display="block";
+      document.getElementById("tells").innerHTML = hits.map(function(k){return '<span class="tag">'+k+' <b>×'+r.tells[k]+'</b></span>';}).join(""); }
+    else tw.style.display="none";
+
+    document.getElementById("out").scrollIntoView({behavior:"smooth",block:"nearest"});
+  };
+})();
+</script>
+</body>
+</html>

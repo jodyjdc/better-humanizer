@@ -8,6 +8,11 @@ It is the successor to [`blader/humanizer`](https://github.com/blader/humanizer)
 single static prompt that deletes 33 known AI "tells". humanizer-pro keeps that
 pattern knowledge but adds the three things a static checklist can't do.
 
+> **▶ Try it now, no install:** **[the human-band playground](https://jodyjdc.github.io/better-humanizer/web/playground.html)** —
+> paste text, see how far it sits from the human band, per feature. It runs the *exact
+> same* scorer as `scripts/stylo.py` (ported to JS and verified identical to 4 decimals),
+> entirely in your browser. Nothing is uploaded.
+
 **Built for Claude Code, compatible with any file-aware agent.** Claude Code loads
 `SKILL.md` as the `/humanizer-pro` skill (first-class); Codex, Antigravity, OpenCode,
 and other file-aware agents enter through `AGENTS.md`. Same loop, same deterministic
@@ -40,6 +45,40 @@ measurement is reproducible everywhere. Only the model doing the rewriting diffe
 A loop generates several candidate rewrites, scores them, vetoes any that lose
 meaning or fall outside the human band, keeps the best, and iterates on the judges'
 critique. That feedback loop is the "self-improvement".
+
+## Proof (reproducible, deterministic)
+
+25 AI-generated passages across all 7 registers, each scored by the standard-library
+stylometric scorer against human-calibrated bands. Three versions of every passage:
+the **raw AI** text, the **original humanizer**, and **humanizer-pro**.
+
+| register | n | dist: AI → base → **pro** | over-correction self-tells (base → **pro**) | pro closest |
+|---|--:|---|---|--:|
+| business | 3 | 0.37 → 0.40 → **0.23** | 1.0 → **0.0** | 67% |
+| journalism | 3 | 3.82 → 1.62 → **0.10** | 1.3 → **0.0** | 100% |
+| literary | 4 | 0.66 → 0.81 → **0.47** | 2.0 → **0.0** | 100% |
+| scientific | 4 | 0.89 → 0.80 → **0.30** | 0.5 → **0.2** | 100% |
+| social-media | 3 | 1.18 → 0.48 → **0.23** | 2.0 → **0.0** | 100% |
+| spontaneous | 5 | 1.46 → 0.72 → **0.42** | 1.8 → **0.2** | 100% |
+| technical-docs | 3 | 0.65 → 0.27 → **0.19** | 1.0 → **0.0** | 100% |
+| **all** | **25** | **1.26 → 0.73 → 0.30** | **1.4 → 0.1** | **96%** |
+
+`distance` = composite stylometric distance to the human band (lower = more human).
+`self-tells` = over-correction flags (lower = better). Across all 25, humanizer-pro cuts
+the distance to the human band by **76%** vs raw AI (1.26 → 0.30), beats the original
+humanizer (0.73 → 0.30), and does it with near-zero over-correction (1.4 → 0.1). It is
+the most-human of the three on **96%** of samples.
+
+```bash
+python3 eval/benchmark.py            # reproduce this exact table
+python3 eval/benchmark.py --check    # regression gate: exit 1 if pro stops winning
+```
+
+> Honest read: `distance` is a stylometric measure, not a detector score (see the
+> explicit non-goal below). The numbers are reproducible; **business** is the one
+> register where pro is not always closest (three short emails where the AI text already
+> sat near the band). The semantic half — does it keep meaning and read human? — is the
+> blind judge panel in [`eval/judge_blind.md`](eval/judge_blind.md).
 
 ## Aim at a specific writer (optional)
 
@@ -78,10 +117,9 @@ python3 scripts/build_reference.py --register spontaneous
 #   Codex:                   open the repo and ask to humanize  (AGENTS.md routes it)
 # Both follow the same loop; the scoring is a deterministic Python subprocess.
 
-# Prove it beats the original (blind A/B):
-python3 eval/run_eval.py --register spontaneous
-python3 eval/run_eval.py --register scientific
-python3 eval/run_eval.py --register literary
+# Prove it (deterministic, all 7 registers):
+python3 eval/benchmark.py                       # the headline table above
+python3 eval/run_eval.py --register literary    # per-register, per-sample detail
 ```
 
 Run the tests (zero dependencies):
@@ -97,15 +135,14 @@ python3 tests/run.py
 | Output check | none | stylometric distance + 3-judge panel |
 | Voice | one default | register profiles + corpus calibration |
 | Em dashes / triads | hard-banned | targeted to the human band (floor + ceiling) |
-| Proof it works | trust | blind A/B eval harness |
+| Proof it works | trust | reproducible benchmark (−76% distance) + blind A/B |
 
-Against bands calibrated from real human text, humanizer-pro lands closer to the
-human distribution on every sample across seven registers — **5/5** spontaneous,
-**4/4** scientific, **4/4** literary, and **3/3** each for business, journalism,
-social-media, and technical-docs (**25/25** total), same machinery throughout. The
-contraction ceiling alone runs from 0.00 (scientific — zero is human there) to 5.78
-(business email), and the em-dash ceiling from 0.00 to 1.71, which is why a one-size
-humanizer damages most registers. See [`eval/REPORT.md`](eval/REPORT.md).
+The per-register calibration is why a one-size humanizer damages most registers: the
+contraction ceiling alone runs from 0.00 (scientific — zero contractions is human there)
+to 5.78 (business email), and the em-dash ceiling from 0.00 to 1.71. Same machinery,
+recalibrated per register — and the [Proof](#proof-reproducible-deterministic) table
+above shows it lands closest to the human band on 96% of 25 samples across all seven.
+Full numbers in [`eval/REPORT.md`](eval/REPORT.md).
 
 ## Explicit non-goal
 

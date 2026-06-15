@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: tests + benchmark gate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Zero runtime dependencies — standard library only.
+      - name: Test suite
+        run: python3 tests/run.py
+
+      # The benchmark is also a regression gate: it fails the build if humanizer-pro
+      # stops being the most-human / least-over-corrected on average.
+      - name: Benchmark regression gate
+        run: python3 eval/benchmark.py --check --no-write

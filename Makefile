@@ -1,8 +1,13 @@
-.PHONY: test corpus eval all clean
+.PHONY: test benchmark corpus eval all clean
 
 # Run the test suite (standard library, no pytest needed).
 test:
 	python3 tests/run.py
+
+# Deterministic, all-register benchmark (AI -> baseline -> pro). Doubles as a
+# regression gate: --check exits non-zero if pro stops being the most-human.
+benchmark:
+	python3 eval/benchmark.py --check
 
 # Fetch the human reference corpora and (re)calibrate the bands for every register.
 corpus:
@@ -27,7 +32,7 @@ eval:
 		python3 eval/run_eval.py --register $$r; echo; \
 	done
 
-all: test eval
+all: test benchmark eval
 
 clean:
 	rm -rf corpus/*/raw __pycache__ */__pycache__ *.tar.gz
