@@ -1,0 +1,7 @@
+{
+  "name": "reddit-power-user",
+  "register": "social-media",
+  "expertise": "practitioner",
+  "lexicon_allow": ["honestly", "literally", "basically", "tbh", "imo"],
+  "lexicon_deny": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "seasoned-journalist",
+  "register": "journalism",
+  "expertise": "expert",
+  "lexicon_allow": [],
+  "lexicon_deny": ["game-changing", "must-visit", "breathtaking", "stunning"]
+}

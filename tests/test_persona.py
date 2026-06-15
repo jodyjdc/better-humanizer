@@ -24,3 +24,23 @@ def test_score_accepts_allow_deny():
     out = stylo.score("we leverage robust synergies", "business",
                       allow={"leverage"}, deny=["synergies"])
     assert "tell_rate" in out["features"]
+
+
+def test_load_persona_resolves():
+    p = stylo.load_persona("reddit-power-user")
+    assert p["register"] == "social-media"
+    assert "literally" in p["lexicon_allow"]
+
+
+def test_resolve_target_persona():
+    ref, register, allow, deny = stylo._resolve_target(
+        register="spontaneous", persona="seasoned-journalist")
+    assert register == "journalism"             # persona overrides --register
+    assert ref["bands"] == stylo.load_reference("journalism", "expert")["bands"]
+    assert "game-changing" in deny
+
+
+def test_resolve_target_plain_register():
+    ref, register, allow, deny = stylo._resolve_target(register="literary")
+    assert register == "literary" and allow == set() and deny == []
+    assert ref["bands"] == stylo.load_reference("literary")["bands"]

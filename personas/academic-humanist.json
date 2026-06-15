@@ -1,0 +1,7 @@
+{
+  "name": "academic-humanist",
+  "register": "literary",
+  "expertise": "expert",
+  "lexicon_allow": [],
+  "lexicon_deny": ["delve", "tapestry", "testament"]
+}

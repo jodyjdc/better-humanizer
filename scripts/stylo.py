@@ -8,6 +8,7 @@ party dependencies: runs anywhere Python 3 runs.
 import math
 import re
 import statistics
+import sys
 
 WORD_RE = re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?")
 SENT_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
@@ -621,15 +622,45 @@ def score(text, register="spontaneous", ref=None, allow=None, deny=None):
     }
 
 
+def _resolve_target(register="spontaneous", expertise=None, voice=None,
+                    bands=None, persona=None):
+    """Resolve target flags to (ref_dict, register_label, allow_set, deny_list).
+    Precedence: persona > voice/bands > expertise > register."""
+    if persona:
+        p = load_persona(persona)
+        ref = load_reference(p["register"], p.get("expertise"))
+        allow = {t.lower() for t in p.get("lexicon_allow", [])}
+        deny = [t.lower() for t in p.get("lexicon_deny", [])]
+        return ref, p["register"], allow, deny
+    if bands:
+        return load_bands(bands), register, set(), []
+    if voice:
+        return load_bands(ROOT / "voices" / voice / "reference-stats.json"), register, set(), []
+    return load_reference(register, expertise), register, set(), []
+
+
 def _main(argv=None):
     import argparse
 
     ap = argparse.ArgumentParser(description="Stylometric scorer for humanizer-pro.")
     ap.add_argument("file", help="path to a UTF-8 text file to score")
     ap.add_argument("--register", default="spontaneous")
+    ap.add_argument("--expertise", choices=["novice", "practitioner", "expert"],
+                    default=None)
+    ap.add_argument("--voice", default=None, help="voice label under voices/")
+    ap.add_argument("--bands", default=None, help="path to an arbitrary band-set json")
+    ap.add_argument("--persona", default=None, help="persona name under personas/")
     args = ap.parse_args(argv)
+
+    if sum([bool(args.persona), bool(args.voice or args.bands), bool(args.expertise)]) > 1:
+        print("warning: multiple target flags set; using precedence "
+              "persona > voice/bands > expertise > register", file=sys.stderr)
+
+    ref, register, allow, deny = _resolve_target(
+        args.register, args.expertise, args.voice, args.bands, args.persona)
     text = pathlib.Path(args.file).read_text(encoding="utf-8")
-    print(json.dumps(score(text, args.register), indent=2, ensure_ascii=False))
+    print(json.dumps(score(text, register, ref=ref, allow=allow, deny=deny),
+                     indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
