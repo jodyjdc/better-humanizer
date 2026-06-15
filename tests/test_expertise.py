@@ -49,12 +49,35 @@ def test_load_reference_expertise_selects_tier():
     assert stylo.load_reference("scientific", expertise="practitioner")["bands"] == full["bands"]
 
 
-def test_expertise_discriminates():
-    # A dense, high-grade passage should sit closer to the human band under
-    # 'expert' than under 'novice' for the same register.
-    dense = ("We demonstrate that the proposed estimator attains the minimax rate "
-             "under heteroskedastic noise, and we characterize its asymptotic "
-             "distribution via a functional central limit theorem.")
-    exp = stylo.score(dense, "scientific", ref=stylo.load_reference("scientific", "expert"))
-    nov = stylo.score(dense, "scientific", ref=stylo.load_reference("scientific", "novice"))
-    assert exp["stylo_distance"] < nov["stylo_distance"]
+_EXPERT_PROSE = (
+    "We demonstrate that the proposed estimator attains the minimax rate under "
+    "heteroskedastic noise, and we characterize its asymptotic distribution via a "
+    "functional central limit theorem. The analysis proceeds by decomposing the "
+    "empirical process into a martingale component and a remainder term whose "
+    "contribution is shown to be asymptotically negligible under mild regularity "
+    "conditions. Furthermore, we establish uniform consistency over the parameter "
+    "space by invoking a chaining argument together with a maximal inequality for "
+    "sub-Gaussian processes. These results extend prior work to the setting of "
+    "dependent observations, and they accommodate covariate distributions with "
+    "heavy tails. Numerical experiments corroborate the theoretical findings across "
+    "a range of sample sizes and noise levels."
+)
+_NOVICE_PROSE = (
+    "We tested a new tool. It works well. We ran it many times. The results were "
+    "good. It is easy to use. You do not need much setup. We liked it a lot. It "
+    "saved us time. Some parts were slow. But most of it was fast. We will use it "
+    "again. It is a good tool for us."
+)
+
+
+def test_expertise_discriminates_both_directions():
+    # Total distance must track the tier: a dense passage sits closer to the human
+    # band under 'expert', a simple one under 'novice'. (Short snippets are noisy;
+    # discrimination is asserted on realistic, multi-sentence prose.)
+    exp_e = stylo.score(_EXPERT_PROSE, "scientific", ref=stylo.load_reference("scientific", "expert"))
+    exp_n = stylo.score(_EXPERT_PROSE, "scientific", ref=stylo.load_reference("scientific", "novice"))
+    assert exp_e["stylo_distance"] < exp_n["stylo_distance"]
+
+    nov_e = stylo.score(_NOVICE_PROSE, "scientific", ref=stylo.load_reference("scientific", "expert"))
+    nov_n = stylo.score(_NOVICE_PROSE, "scientific", ref=stylo.load_reference("scientific", "novice"))
+    assert nov_n["stylo_distance"] < nov_e["stylo_distance"]
