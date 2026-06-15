@@ -438,10 +438,25 @@ def _load_lexicon():
     return _LEXICON_CACHE
 
 
-def load_reference(register):
-    """Load the human band set + function-word reference for a register."""
-    path = ROOT / "corpus" / register / "reference-stats.json"
+def load_reference(register, expertise=None):
+    """Load the band-set for a register, optionally an expertise tier.
+    expertise None/"practitioner" -> the full register bands (backward-compatible);
+    "novice"/"expert" -> corpus/<register>/expertise-<level>.json."""
+    if expertise in (None, "practitioner"):
+        path = ROOT / "corpus" / register / "reference-stats.json"
+    else:
+        path = ROOT / "corpus" / register / f"expertise-{expertise}.json"
     return json.loads(path.read_text())
+
+
+def load_bands(path):
+    """Load an arbitrary band-set file (e.g. a calibrated voice)."""
+    return json.loads(pathlib.Path(path).read_text())
+
+
+def load_persona(name):
+    """Load a persona definition: {register, expertise, lexicon_allow, lexicon_deny}."""
+    return json.loads((ROOT / "personas" / f"{name}.json").read_text())
 
 
 def _extract_features(text):

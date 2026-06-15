@@ -38,3 +38,23 @@ def test_expertise_tiers_split_by_complexity():
     nov_fk = statistics.fmean(stylo.flesch_kincaid_grade(t) for t in novice)
     exp_fk = statistics.fmean(stylo.flesch_kincaid_grade(t) for t in expert)
     assert exp_fk > nov_fk
+
+
+def test_load_reference_expertise_selects_tier():
+    full = stylo.load_reference("scientific")
+    expert = stylo.load_reference("scientific", expertise="expert")
+    novice = stylo.load_reference("scientific", expertise="novice")
+    assert expert["bands"] != novice["bands"]
+    # practitioner is the full band-set (backward-compatible default)
+    assert stylo.load_reference("scientific", expertise="practitioner")["bands"] == full["bands"]
+
+
+def test_expertise_discriminates():
+    # A dense, high-grade passage should sit closer to the human band under
+    # 'expert' than under 'novice' for the same register.
+    dense = ("We demonstrate that the proposed estimator attains the minimax rate "
+             "under heteroskedastic noise, and we characterize its asymptotic "
+             "distribution via a functional central limit theorem.")
+    exp = stylo.score(dense, "scientific", ref=stylo.load_reference("scientific", "expert"))
+    nov = stylo.score(dense, "scientific", ref=stylo.load_reference("scientific", "novice"))
+    assert exp["stylo_distance"] < nov["stylo_distance"]
