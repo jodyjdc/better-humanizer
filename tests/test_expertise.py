@@ -24,3 +24,17 @@ def test_flesch_kincaid_grade_orders_by_complexity():
 
 def test_flesch_kincaid_grade_empty_is_zero():
     assert stylo.flesch_kincaid_grade("") == 0.0
+
+
+def test_expertise_tiers_split_by_complexity():
+    import statistics
+
+    import build_reference
+    simple = ["See the cat. See the dog. We run and play. It is fun. Yes it is."] * 6
+    complex_ = [("The epistemological ramifications of phenomenological inquiry "
+                 "necessitate reconsideration of foundational presuppositions "
+                 "underpinning contemporary hermeneutic methodology and praxis.")] * 6
+    novice, expert = build_reference.expertise_tiers(simple + complex_)
+    nov_fk = statistics.fmean(stylo.flesch_kincaid_grade(t) for t in novice)
+    exp_fk = statistics.fmean(stylo.flesch_kincaid_grade(t) for t in expert)
+    assert exp_fk > nov_fk

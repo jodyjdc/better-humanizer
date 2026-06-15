@@ -68,6 +68,15 @@ def aggregate(texts):
     return bands, fw
 
 
+def expertise_tiers(texts):
+    """Split texts into novice (lowest-FK third) and expert (highest-FK third) by
+    Flesch-Kincaid grade. The middle third is unused: 'practitioner' is the full
+    register band-set. Returns (novice_texts, expert_texts)."""
+    graded = sorted(texts, key=stylo.flesch_kincaid_grade)
+    third = max(1, len(graded) // 3)
+    return graded[:third], graded[-third:]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--register", default="spontaneous")
@@ -103,6 +112,26 @@ def main(argv=None):
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(stats, indent=2, ensure_ascii=False) + "\n")
     print(f"wrote {out_path} ({len(files)} texts)")
+
+    # Expertise tiers: novice (low-FK) and expert (high-FK) band-sets. practitioner
+    # is the full reference-stats.json above (so the default flag stays backward-compatible).
+    novice, expert = expertise_tiers(texts)
+    for level, tier_texts in (("novice", novice), ("expert", expert)):
+        t_bands, t_fw = aggregate(tier_texts)
+        fks = sorted(stylo.flesch_kincaid_grade(t) for t in tier_texts)
+        tier_stats = {
+            "register": args.register,
+            "expertise": level,
+            "calibrated": True,
+            "n_texts": len(tier_texts),
+            "fk_grade_range": [round(fks[0], 2), round(fks[-1], 2)],
+            "note": f"{level} tier (FK-grade tercile) of {args.register}, {len(tier_texts)} texts.",
+            "bands": t_bands,
+            "function_word_vector": t_fw,
+        }
+        tier_path = out_path.parent / f"expertise-{level}.json"
+        tier_path.write_text(json.dumps(tier_stats, indent=2, ensure_ascii=False) + "\n")
+        print(f"wrote {tier_path} ({len(tier_texts)} texts, FK {tier_stats['fk_grade_range']})")
     return 0
 
 

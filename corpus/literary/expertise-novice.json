@@ -1,0 +1,195 @@
+{
+  "register": "literary",
+  "expertise": "novice",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    1.14,
+    4.85
+  ],
+  "note": "novice tier (FK-grade tercile) of literary, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 7.7174,
+      "ceiling": 12.4227
+    },
+    "sentence_length_cv": {
+      "floor": 0.5592,
+      "ceiling": 0.8697
+    },
+    "mtld": {
+      "floor": 67.8677,
+      "ceiling": 125.6684
+    },
+    "ttr": {
+      "floor": 0.5013,
+      "ceiling": 0.678
+    },
+    "hapax_ratio": {
+      "floor": 0.6704,
+      "ceiling": 0.7998
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 2.6051
+    },
+    "comma_rate": {
+      "floor": 2.1783,
+      "ceiling": 9.0221
+    },
+    "contraction_rate": {
+      "floor": 0.2879,
+      "ceiling": 6.1416
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 0.8995
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 2.2
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 1.5936
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.203
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.022751,
+    "about": 0.001872,
+    "above": 0.000249,
+    "after": 0.001036,
+    "again": 0.001813,
+    "against": 0.000217,
+    "all": 0.003394,
+    "am": 0.000932,
+    "an": 0.002177,
+    "and": 0.025646,
+    "any": 0.000305,
+    "are": 0.002674,
+    "as": 0.00486,
+    "at": 0.005342,
+    "be": 0.005254,
+    "because": 0.000615,
+    "been": 0.002087,
+    "before": 0.001144,
+    "being": 0.000817,
+    "between": 9.3e-05,
+    "both": 0.000176,
+    "but": 0.005668,
+    "by": 0.001678,
+    "can": 0.003653,
+    "could": 0.002344,
+    "did": 0.002291,
+    "do": 0.004965,
+    "does": 0.001028,
+    "doing": 0.000429,
+    "down": 0.001669,
+    "during": 0.000108,
+    "each": 0.000527,
+    "few": 0.000694,
+    "for": 0.007709,
+    "from": 0.002864,
+    "further": 9e-05,
+    "had": 0.003297,
+    "has": 0.000762,
+    "have": 0.005518,
+    "having": 0.000235,
+    "he": 0.012051,
+    "her": 0.006899,
+    "here": 0.002319,
+    "hers": 8.7e-05,
+    "herself": 5.2e-05,
+    "him": 0.004019,
+    "himself": 0.000784,
+    "his": 0.007668,
+    "how": 0.002408,
+    "i": 0.034876,
+    "if": 0.00202,
+    "in": 0.01328,
+    "into": 0.002162,
+    "is": 0.007629,
+    "it": 0.014214,
+    "it's": 0.003196,
+    "its": 0.000939,
+    "just": 0.004216,
+    "me": 0.005957,
+    "more": 0.002239,
+    "most": 0.000456,
+    "my": 0.012438,
+    "myself": 0.001001,
+    "no": 0.005101,
+    "nor": 9e-05,
+    "not": 0.003849,
+    "now": 0.002358,
+    "of": 0.01511,
+    "off": 0.001513,
+    "on": 0.006722,
+    "once": 0.000828,
+    "only": 0.001804,
+    "or": 0.002099,
+    "other": 0.0012,
+    "our": 0.001644,
+    "out": 0.004137,
+    "over": 0.0021,
+    "own": 0.000467,
+    "she": 0.004841,
+    "should": 0.000486,
+    "so": 0.003141,
+    "some": 0.001268,
+    "such": 0.000344,
+    "than": 0.00119,
+    "that": 0.009108,
+    "the": 0.050376,
+    "their": 0.001115,
+    "them": 0.001379,
+    "then": 0.002155,
+    "there": 0.002787,
+    "these": 0.000746,
+    "they": 0.004446,
+    "this": 0.005448,
+    "those": 0.000444,
+    "through": 0.001702,
+    "to": 0.023264,
+    "too": 0.001174,
+    "under": 0.00035,
+    "until": 0.001108,
+    "up": 0.00439,
+    "very": 0.000516,
+    "was": 0.01202,
+    "we": 0.003658,
+    "were": 0.001655,
+    "what": 0.006061,
+    "when": 0.001803,
+    "where": 0.000809,
+    "which": 0.000316,
+    "while": 0.000759,
+    "who": 0.001939,
+    "why": 0.00177,
+    "will": 0.003229,
+    "with": 0.005542,
+    "would": 0.001383,
+    "you": 0.014125,
+    "your": 0.002328
+  }
+}

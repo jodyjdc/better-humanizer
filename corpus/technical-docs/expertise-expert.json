@@ -1,0 +1,194 @@
+{
+  "register": "technical-docs",
+  "expertise": "expert",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    14.01,
+    66.07
+  ],
+  "note": "expert tier (FK-grade tercile) of technical-docs, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 21.7724,
+      "ceiling": 96.2981
+    },
+    "sentence_length_cv": {
+      "floor": 0.2347,
+      "ceiling": 1.2715
+    },
+    "mtld": {
+      "floor": 15.4363,
+      "ceiling": 81.2686
+    },
+    "ttr": {
+      "floor": 0.4224,
+      "ceiling": 0.6771
+    },
+    "hapax_ratio": {
+      "floor": 0.5109,
+      "ceiling": 0.7608
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 1.2664
+    },
+    "comma_rate": {
+      "floor": 2.1937,
+      "ceiling": 13.1194
+    },
+    "contraction_rate": {
+      "floor": 0.0,
+      "ceiling": 2.5181
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 2.5458
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 2.2856
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.6681
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.1016
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.017482,
+    "about": 0.000479,
+    "above": 0.000338,
+    "after": 0.000796,
+    "against": 0.00061,
+    "all": 0.00153,
+    "am": 0.000122,
+    "an": 0.002282,
+    "and": 0.011661,
+    "any": 0.001386,
+    "are": 0.001614,
+    "aren't": 7.9e-05,
+    "as": 0.005764,
+    "at": 0.002602,
+    "be": 0.005155,
+    "because": 0.00047,
+    "before": 0.001211,
+    "being": 0.000331,
+    "below": 0.000504,
+    "between": 0.000376,
+    "but": 0.002566,
+    "by": 0.003238,
+    "can": 0.007097,
+    "can't": 0.00017,
+    "cannot": 9.8e-05,
+    "could": 0.001506,
+    "did": 0.000337,
+    "do": 0.002374,
+    "does": 0.000314,
+    "doesn't": 0.00063,
+    "doing": 0.000747,
+    "don't": 0.00149,
+    "down": 0.000194,
+    "each": 0.001832,
+    "few": 0.000301,
+    "for": 0.007457,
+    "from": 0.005856,
+    "further": 0.000301,
+    "has": 0.001245,
+    "hasn't": 0.000278,
+    "have": 0.00181,
+    "having": 0.000429,
+    "he": 0.000539,
+    "her": 0.000105,
+    "here": 0.001095,
+    "his": 0.000297,
+    "how": 0.000504,
+    "i": 0.008588,
+    "if": 0.006432,
+    "in": 0.010649,
+    "into": 0.001033,
+    "is": 0.007076,
+    "isn't": 0.000554,
+    "it": 0.007532,
+    "it's": 0.000457,
+    "its": 0.000257,
+    "itself": 0.000329,
+    "just": 0.002065,
+    "me": 0.000337,
+    "more": 0.000853,
+    "most": 0.000707,
+    "my": 0.001281,
+    "no": 0.00037,
+    "not": 0.00383,
+    "now": 0.000863,
+    "of": 0.014857,
+    "off": 0.00046,
+    "on": 0.005665,
+    "once": 0.000482,
+    "only": 0.001935,
+    "or": 0.003834,
+    "other": 0.00103,
+    "our": 0.000105,
+    "out": 0.001561,
+    "over": 0.000259,
+    "own": 0.000322,
+    "should": 0.001292,
+    "so": 0.003713,
+    "some": 7.9e-05,
+    "such": 0.000261,
+    "than": 0.000964,
+    "that": 0.00603,
+    "the": 0.036863,
+    "their": 0.00042,
+    "them": 0.000329,
+    "then": 0.003623,
+    "there": 0.000709,
+    "these": 0.000229,
+    "they": 0.000395,
+    "this": 0.007838,
+    "those": 0.000105,
+    "through": 0.000163,
+    "to": 0.017603,
+    "too": 0.00025,
+    "under": 0.000278,
+    "up": 0.000804,
+    "very": 0.000475,
+    "was": 0.001152,
+    "wasn't": 0.000152,
+    "we": 0.00452,
+    "were": 0.000209,
+    "what": 0.001414,
+    "when": 0.001766,
+    "where": 0.002335,
+    "which": 0.004558,
+    "while": 0.000464,
+    "who": 7.9e-05,
+    "why": 0.000177,
+    "will": 0.002729,
+    "with": 0.005921,
+    "won't": 0.000594,
+    "would": 0.001733,
+    "you": 0.014065,
+    "your": 0.00494,
+    "yourself": 8.3e-05
+  }
+}

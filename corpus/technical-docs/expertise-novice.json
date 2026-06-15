@@ -1,0 +1,189 @@
+{
+  "register": "technical-docs",
+  "expertise": "novice",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    1.88,
+    9.26
+  ],
+  "note": "novice tier (FK-grade tercile) of technical-docs, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 11.2538,
+      "ceiling": 21.2202
+    },
+    "sentence_length_cv": {
+      "floor": 0.3289,
+      "ceiling": 0.8211
+    },
+    "mtld": {
+      "floor": 32.5079,
+      "ceiling": 85.1906
+    },
+    "ttr": {
+      "floor": 0.4922,
+      "ceiling": 0.7608
+    },
+    "hapax_ratio": {
+      "floor": 0.5957,
+      "ceiling": 0.8015
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 0.776
+    },
+    "comma_rate": {
+      "floor": 1.5875,
+      "ceiling": 8.8799
+    },
+    "contraction_rate": {
+      "floor": 0.0,
+      "ceiling": 2.9403
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 0.2592
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 0.8824
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 4.4229
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 1.0727
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.5333
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.027004,
+    "about": 0.001974,
+    "above": 0.000298,
+    "after": 0.002095,
+    "all": 0.00421,
+    "am": 0.001287,
+    "an": 0.002711,
+    "and": 0.013839,
+    "any": 0.001404,
+    "are": 0.006249,
+    "as": 0.005673,
+    "at": 0.001702,
+    "be": 0.009076,
+    "because": 0.001724,
+    "been": 0.000756,
+    "before": 0.000685,
+    "being": 0.000317,
+    "below": 0.000156,
+    "between": 0.000499,
+    "both": 0.000114,
+    "but": 0.003904,
+    "by": 0.001586,
+    "can": 0.007414,
+    "can't": 0.00018,
+    "cannot": 0.00015,
+    "could": 0.000501,
+    "did": 0.000431,
+    "do": 0.004486,
+    "does": 0.000686,
+    "doesn't": 0.000766,
+    "don't": 0.002793,
+    "down": 0.000718,
+    "each": 0.000299,
+    "few": 0.0002,
+    "for": 0.009012,
+    "from": 0.007329,
+    "has": 0.002154,
+    "have": 0.008353,
+    "haven't": 0.00018,
+    "having": 0.000387,
+    "he": 0.000231,
+    "here": 0.002874,
+    "himself": 0.000116,
+    "his": 0.000116,
+    "how": 0.000719,
+    "i": 0.011415,
+    "if": 0.006149,
+    "in": 0.014261,
+    "into": 0.000316,
+    "is": 0.020402,
+    "it": 0.011163,
+    "it's": 0.002044,
+    "its": 0.000545,
+    "itself": 0.000275,
+    "just": 0.001894,
+    "me": 0.000362,
+    "more": 0.001057,
+    "most": 0.000544,
+    "my": 0.000719,
+    "no": 0.001743,
+    "not": 0.010139,
+    "now": 0.000277,
+    "of": 0.018619,
+    "off": 0.000685,
+    "on": 0.00451,
+    "once": 0.002133,
+    "only": 0.002259,
+    "or": 0.004121,
+    "other": 0.002058,
+    "out": 0.000463,
+    "over": 0.00063,
+    "she": 0.000117,
+    "should": 0.002339,
+    "so": 0.003354,
+    "some": 0.003392,
+    "such": 0.00015,
+    "than": 0.001002,
+    "that": 0.011013,
+    "the": 0.053812,
+    "them": 0.00182,
+    "then": 0.001808,
+    "there": 0.004208,
+    "these": 0.00065,
+    "they": 0.003341,
+    "this": 0.009917,
+    "those": 0.000533,
+    "through": 0.000151,
+    "to": 0.026954,
+    "too": 0.000677,
+    "under": 0.000214,
+    "until": 0.000329,
+    "up": 0.001666,
+    "very": 0.001349,
+    "was": 0.001208,
+    "we": 0.003132,
+    "were": 0.000301,
+    "what": 0.002095,
+    "when": 0.002211,
+    "where": 0.001386,
+    "which": 0.002477,
+    "while": 0.000805,
+    "who": 0.000231,
+    "why": 0.002029,
+    "will": 0.005589,
+    "with": 0.005047,
+    "won't": 0.000618,
+    "would": 0.003434,
+    "you": 0.020193,
+    "your": 0.00912,
+    "yourself": 0.000212
+  }
+}

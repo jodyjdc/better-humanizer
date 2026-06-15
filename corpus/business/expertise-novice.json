@@ -1,0 +1,192 @@
+{
+  "register": "business",
+  "expertise": "novice",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    1.19,
+    6.18
+  ],
+  "note": "novice tier (FK-grade tercile) of business, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 7.4725,
+      "ceiling": 14.0942
+    },
+    "sentence_length_cv": {
+      "floor": 0.4382,
+      "ceiling": 0.9731
+    },
+    "mtld": {
+      "floor": 32.6835,
+      "ceiling": 197.9046
+    },
+    "ttr": {
+      "floor": 0.6664,
+      "ceiling": 0.9483
+    },
+    "hapax_ratio": {
+      "floor": 0.7446,
+      "ceiling": 0.9369
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 0.6322
+    },
+    "comma_rate": {
+      "floor": 0.0416,
+      "ceiling": 13.4683
+    },
+    "contraction_rate": {
+      "floor": 0.1016,
+      "ceiling": 6.0123
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 0.55
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 0.6749
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.4748
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.4349
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.022163,
+    "about": 0.002495,
+    "above": 0.000362,
+    "after": 0.000487,
+    "again": 0.000229,
+    "all": 0.00361,
+    "am": 0.003645,
+    "an": 0.002876,
+    "and": 0.019374,
+    "any": 0.0013,
+    "are": 0.008773,
+    "aren't": 0.000665,
+    "as": 0.004761,
+    "at": 0.007375,
+    "be": 0.00922,
+    "because": 7e-05,
+    "been": 0.001671,
+    "between": 0.000625,
+    "both": 0.000637,
+    "but": 0.004093,
+    "by": 0.003659,
+    "can": 0.003122,
+    "can't": 0.00082,
+    "could": 0.001256,
+    "couldn't": 0.000694,
+    "didn't": 0.00085,
+    "do": 0.003231,
+    "does": 0.000931,
+    "doesn't": 0.000589,
+    "doing": 0.00014,
+    "don't": 0.0028,
+    "down": 7e-05,
+    "each": 0.000229,
+    "few": 0.000668,
+    "for": 0.012563,
+    "from": 0.003836,
+    "had": 0.001036,
+    "has": 0.003661,
+    "have": 0.009109,
+    "he": 0.002179,
+    "her": 0.000127,
+    "here": 0.00139,
+    "hers": 0.000229,
+    "him": 0.000534,
+    "himself": 0.000129,
+    "his": 0.000256,
+    "how": 0.000868,
+    "i": 0.022558,
+    "if": 0.00923,
+    "in": 0.010185,
+    "into": 0.000647,
+    "is": 0.008307,
+    "isn't": 0.000127,
+    "it": 0.012713,
+    "it's": 0.001602,
+    "just": 0.002733,
+    "me": 0.00905,
+    "more": 0.000915,
+    "my": 0.002279,
+    "no": 0.001483,
+    "not": 0.00367,
+    "now": 0.001346,
+    "of": 0.007881,
+    "off": 0.00021,
+    "on": 0.012577,
+    "once": 0.000676,
+    "only": 0.000184,
+    "or": 0.003849,
+    "other": 0.000229,
+    "our": 0.002988,
+    "out": 0.003476,
+    "over": 0.001947,
+    "she": 0.000127,
+    "should": 0.003051,
+    "so": 0.002914,
+    "some": 0.002357,
+    "than": 0.00141,
+    "that": 0.011468,
+    "the": 0.036274,
+    "their": 0.000673,
+    "them": 0.001346,
+    "then": 0.000702,
+    "there": 0.00322,
+    "these": 0.000822,
+    "they": 0.002986,
+    "this": 0.010726,
+    "those": 0.001026,
+    "through": 0.000939,
+    "to": 0.038481,
+    "too": 0.00156,
+    "under": 0.000278,
+    "until": 0.000629,
+    "up": 0.004066,
+    "very": 0.0029,
+    "was": 0.004182,
+    "wasn't": 0.000521,
+    "we": 0.00877,
+    "were": 0.001188,
+    "weren't": 0.000284,
+    "what": 0.000935,
+    "when": 0.003357,
+    "where": 0.00041,
+    "which": 0.00014,
+    "while": 0.000648,
+    "who": 0.001388,
+    "why": 0.001411,
+    "will": 0.012208,
+    "with": 0.006905,
+    "would": 0.007244,
+    "you": 0.031897,
+    "your": 0.006645,
+    "yours": 7e-05,
+    "yourself": 0.000229
+  }
+}

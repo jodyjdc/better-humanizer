@@ -1,0 +1,194 @@
+{
+  "register": "business",
+  "expertise": "expert",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    9.68,
+    26.46
+  ],
+  "note": "expert tier (FK-grade tercile) of business, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 13.8991,
+      "ceiling": 35.0606
+    },
+    "sentence_length_cv": {
+      "floor": 0.373,
+      "ceiling": 0.8767
+    },
+    "mtld": {
+      "floor": 60.4444,
+      "ceiling": 140.4219
+    },
+    "ttr": {
+      "floor": 0.5618,
+      "ceiling": 0.8039
+    },
+    "hapax_ratio": {
+      "floor": 0.6965,
+      "ceiling": 0.8415
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 0.3218
+    },
+    "comma_rate": {
+      "floor": 1.6564,
+      "ceiling": 9.5413
+    },
+    "contraction_rate": {
+      "floor": 0.0,
+      "ceiling": 3.9724
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 1.0107
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 0.6978
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.317
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.2325
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.037
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.016187,
+    "about": 0.002311,
+    "above": 0.000147,
+    "after": 0.000831,
+    "again": 0.000463,
+    "against": 0.000689,
+    "all": 0.0029,
+    "am": 0.001469,
+    "an": 0.00393,
+    "and": 0.022357,
+    "any": 0.002888,
+    "are": 0.006457,
+    "as": 0.006245,
+    "at": 0.004858,
+    "be": 0.007908,
+    "because": 0.000588,
+    "been": 0.001614,
+    "before": 0.000693,
+    "being": 0.000694,
+    "below": 0.000463,
+    "between": 0.000293,
+    "both": 0.000454,
+    "but": 0.002957,
+    "by": 0.003763,
+    "can": 0.001577,
+    "can't": 0.000489,
+    "could": 0.000707,
+    "couldn't": 8e-05,
+    "did": 0.000147,
+    "do": 0.001573,
+    "does": 0.000545,
+    "doesn't": 0.000146,
+    "don't": 0.000154,
+    "down": 0.000775,
+    "during": 0.000589,
+    "few": 0.000305,
+    "for": 0.012593,
+    "from": 0.003919,
+    "further": 0.0005,
+    "had": 0.000641,
+    "has": 0.00352,
+    "have": 0.007836,
+    "having": 0.000357,
+    "he": 0.001748,
+    "her": 0.000284,
+    "here": 0.000255,
+    "his": 0.00066,
+    "how": 0.000313,
+    "i": 0.007352,
+    "if": 0.003546,
+    "in": 0.014937,
+    "into": 0.000883,
+    "is": 0.00955,
+    "it": 0.00718,
+    "it's": 0.000483,
+    "its": 0.000667,
+    "just": 0.000611,
+    "me": 0.002254,
+    "more": 0.001209,
+    "most": 7.2e-05,
+    "my": 0.002645,
+    "no": 0.000967,
+    "not": 0.004615,
+    "now": 0.00111,
+    "of": 0.015642,
+    "off": 9.6e-05,
+    "on": 0.011437,
+    "once": 8e-05,
+    "only": 0.001034,
+    "or": 0.005853,
+    "other": 0.00188,
+    "our": 0.004798,
+    "out": 0.002082,
+    "over": 0.001365,
+    "own": 0.000443,
+    "should": 0.000885,
+    "so": 0.001562,
+    "some": 0.000507,
+    "such": 0.000791,
+    "than": 0.001256,
+    "that": 0.012334,
+    "the": 0.056321,
+    "their": 0.000786,
+    "them": 0.001061,
+    "then": 0.000202,
+    "there": 0.001342,
+    "these": 0.001495,
+    "they": 0.002078,
+    "this": 0.006727,
+    "those": 0.000555,
+    "through": 0.000411,
+    "to": 0.038293,
+    "too": 0.000421,
+    "under": 0.00016,
+    "until": 0.000936,
+    "up": 0.001606,
+    "very": 0.001298,
+    "was": 0.001266,
+    "wasn't": 0.000272,
+    "we": 0.006689,
+    "were": 0.000846,
+    "what": 0.00048,
+    "when": 0.00171,
+    "where": 0.001106,
+    "which": 0.001333,
+    "while": 0.001351,
+    "who": 0.001928,
+    "why": 0.00042,
+    "will": 0.00769,
+    "with": 0.008516,
+    "won't": 0.000424,
+    "would": 0.003494,
+    "you": 0.011702,
+    "your": 0.006521,
+    "yours": 0.000214
+  }
+}

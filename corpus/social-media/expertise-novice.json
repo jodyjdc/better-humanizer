@@ -1,0 +1,207 @@
+{
+  "register": "social-media",
+  "expertise": "novice",
+  "calibrated": true,
+  "n_texts": 40,
+  "fk_grade_range": [
+    1.34,
+    7.41
+  ],
+  "note": "novice tier (FK-grade tercile) of social-media, 40 texts.",
+  "bands": {
+    "sentence_length_mean": {
+      "floor": 10.824,
+      "ceiling": 19.1992
+    },
+    "sentence_length_cv": {
+      "floor": 0.3518,
+      "ceiling": 0.8702
+    },
+    "mtld": {
+      "floor": 59.2053,
+      "ceiling": 116.4937
+    },
+    "ttr": {
+      "floor": 0.5249,
+      "ceiling": 0.855
+    },
+    "hapax_ratio": {
+      "floor": 0.6622,
+      "ceiling": 0.8729
+    },
+    "em_dash_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "comma_rate": {
+      "floor": 1.2694,
+      "ceiling": 6.9826
+    },
+    "contraction_rate": {
+      "floor": 0.7457,
+      "ceiling": 4.8051
+    },
+    "rule_of_three": {
+      "floor": 0.0,
+      "ceiling": 0.4701
+    },
+    "exclaim": {
+      "floor": 0.0,
+      "ceiling": 1.0212
+    },
+    "bold": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "emoji": {
+      "floor": 0.0,
+      "ceiling": 0.2592
+    },
+    "tell_rate": {
+      "floor": 0.0,
+      "ceiling": 0.5714
+    },
+    "transition_density": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "structural_opener_rate": {
+      "floor": 0.0,
+      "ceiling": 0.0
+    },
+    "paragraph_cv": {
+      "floor": 0.0,
+      "ceiling": null
+    }
+  },
+  "function_word_vector": {
+    "a": 0.039284,
+    "about": 0.005111,
+    "above": 0.000395,
+    "after": 0.001167,
+    "again": 0.000448,
+    "against": 0.000968,
+    "all": 0.003051,
+    "am": 0.000315,
+    "an": 0.001999,
+    "and": 0.026473,
+    "any": 0.00136,
+    "are": 0.003686,
+    "aren't": 0.000346,
+    "as": 0.005157,
+    "at": 0.005515,
+    "be": 0.003435,
+    "because": 0.003093,
+    "been": 0.001343,
+    "before": 0.001218,
+    "being": 0.00107,
+    "below": 0.000152,
+    "between": 0.000287,
+    "both": 0.000834,
+    "but": 0.007789,
+    "by": 0.001765,
+    "can": 0.004023,
+    "can't": 0.000737,
+    "cannot": 0.000122,
+    "could": 0.000651,
+    "couldn't": 0.000321,
+    "did": 0.001491,
+    "didn't": 0.001398,
+    "do": 0.002923,
+    "does": 0.000692,
+    "doesn't": 0.000423,
+    "doing": 0.000504,
+    "don't": 0.00349,
+    "down": 0.001341,
+    "during": 0.00011,
+    "each": 0.000184,
+    "few": 0.000954,
+    "for": 0.008229,
+    "from": 0.003462,
+    "further": 5.9e-05,
+    "had": 0.005711,
+    "hadn't": 7.4e-05,
+    "has": 0.001625,
+    "have": 0.005708,
+    "haven't": 0.000192,
+    "having": 0.000491,
+    "he": 0.010213,
+    "her": 0.003264,
+    "here": 0.000578,
+    "herself": 0.000129,
+    "him": 0.002802,
+    "his": 0.00482,
+    "how": 0.001533,
+    "i": 0.028707,
+    "if": 0.00489,
+    "in": 0.013084,
+    "into": 0.002747,
+    "is": 0.009876,
+    "isn't": 0.000634,
+    "it": 0.013841,
+    "it's": 0.00434,
+    "its": 0.000966,
+    "itself": 0.000474,
+    "just": 0.005617,
+    "me": 0.004698,
+    "more": 0.002456,
+    "most": 0.001264,
+    "my": 0.011216,
+    "myself": 0.000802,
+    "no": 0.00258,
+    "not": 0.006231,
+    "now": 0.001756,
+    "of": 0.011901,
+    "off": 0.001014,
+    "on": 0.005945,
+    "once": 0.000728,
+    "only": 0.001915,
+    "or": 0.003757,
+    "other": 0.001576,
+    "our": 0.000885,
+    "out": 0.00348,
+    "over": 0.002065,
+    "own": 0.000274,
+    "she": 0.002752,
+    "should": 0.001474,
+    "so": 0.00733,
+    "some": 0.00204,
+    "such": 0.00037,
+    "than": 0.00129,
+    "that": 0.010517,
+    "the": 0.038726,
+    "their": 0.001755,
+    "them": 0.004241,
+    "then": 0.002481,
+    "there": 0.001746,
+    "these": 0.000979,
+    "they": 0.006482,
+    "this": 0.006244,
+    "those": 0.000399,
+    "through": 0.000743,
+    "to": 0.029003,
+    "too": 0.001097,
+    "until": 0.000881,
+    "up": 0.003291,
+    "very": 0.000753,
+    "was": 0.010252,
+    "wasn't": 0.000265,
+    "we": 0.005741,
+    "were": 0.0025,
+    "what": 0.002755,
+    "when": 0.004088,
+    "where": 0.000922,
+    "which": 0.000782,
+    "while": 0.000962,
+    "who": 0.001583,
+    "whom": 0.000345,
+    "why": 0.000553,
+    "will": 0.002044,
+    "with": 0.005002,
+    "won't": 0.000329,
+    "would": 0.002118,
+    "you": 0.011755,
+    "your": 0.006321,
+    "yourself": 0.000416
+  }
+}
