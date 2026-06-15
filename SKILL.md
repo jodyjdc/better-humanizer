@@ -125,9 +125,13 @@ runs as a subprocess so results are reproducible.
 ## Pattern reference
 
 The tell catalog is `lexicons/ai_tells.json` (the Wikipedia "Signs of AI writing"
-patterns, machine-readable, plus post-2023 LLMisms: sentence-opening transition
-overuse, era framing, structural formulas, hollow affirmatives). It is the single
-source of truth, shared by `stylo.py` and the judges. Do not re-list patterns inline.
+patterns + post-2023 LLMisms + phrase/structure patterns harvested from "Stop Slop"
+by Hardik Pandya — throat-clearing, emphasis crutches, business jargon,
+meta-commentary, binary contrasts, negative listing, rhetorical setups). It is the
+single source of truth, shared by `stylo.py` and the judges. Do not re-list patterns
+inline. NB: Stop Slop's register-blind blanket bans (no em dashes / adverbs / passive
+/ triads) are deliberately NOT adopted — those are calibrated per-register bands here,
+because the data shows a blanket ban is itself a register-specific tell.
 
 ## Scope
 

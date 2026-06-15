@@ -68,3 +68,36 @@ def test_anchored_regexes_do_not_fire_midsentence():
         "team felt certainly proud of course.", LEX)
     assert hits["hollow_affirmatives"] == 0
     assert hits["transitional_overuse"] == 0
+
+
+def test_stopslop_entries_present():
+    names = {e["name"] for e in LEX}
+    for n in ("throat_clearing", "emphasis_crutch", "business_jargon",
+              "meta_commentary", "vague_declarative", "binary_contrast",
+              "negative_listing", "rhetorical_setup"):
+        assert n in names, f"missing stop-slop-derived entry: {n}"
+
+
+def test_stopslop_entries_fire():
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent / "scripts"))
+    import stylo
+    slop = ("Here's what nobody tells you. Let that sink in. We need to circle back "
+            "and double down. Plot twist: as we'll see, the rest of this essay "
+            "explains it. The implications are significant. The answer is not speed, "
+            "it is trust. It wasn't luck, it wasn't skill. What if the real win is "
+            "elsewhere? Think about it.")
+    h = stylo.tell_hits(slop, LEX)
+    for n in ("throat_clearing", "emphasis_crutch", "business_jargon",
+              "meta_commentary", "vague_declarative", "binary_contrast",
+              "negative_listing", "rhetorical_setup"):
+        assert h.get(n, 0) >= 1, f"{n} did not fire on slop sample"
+
+
+def test_stopslop_blanket_bans_not_adopted():
+    # We deliberately did NOT adopt stop-slop's register-blind bans. Adverbs,
+    # em dashes, passive voice, and triads must NOT be catalogued as tells —
+    # they are register-specific and handled by the calibrated bands instead.
+    flat = {t.lower() for e in LEX for t in e["terms"]}
+    for adverb in ("really", "just", "honestly", "literally", "simply", "actually"):
+        assert adverb not in flat, f"adverb '{adverb}' must not be a flat tell term"

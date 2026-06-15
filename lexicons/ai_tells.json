@@ -166,5 +166,61 @@
     "category": "communication",
     "terms": [],
     "regexes": ["(?:^|[.?!]\\s+)(?:Absolutely|Certainly|Indeed)[!,]", "(?:^|[.?!]\\s+)Great question[!.]", "(?:^|[.?!]\\s+)Of course[!,]"]
+  },
+  {
+    "id": 38,
+    "name": "throat_clearing",
+    "category": "communication",
+    "terms": ["the uncomfortable truth is", "let me be clear", "i'll say it again", "can we talk about", "here's what i find interesting", "here's the problem though"],
+    "regexes": ["(?:^|[.?!]\\s+)Here'?s (?:what|why|this|that)\\b"]
+  },
+  {
+    "id": 39,
+    "name": "emphasis_crutch",
+    "category": "filler",
+    "terms": ["let that sink in", "make no mistake", "here's why that matters"],
+    "regexes": ["(?:^|[.?!]\\s+)(?:Full stop|Period)\\."]
+  },
+  {
+    "id": 40,
+    "name": "business_jargon",
+    "category": "language",
+    "terms": ["circle back", "double down", "lean into", "moving forward", "on the same page", "take a step back"],
+    "regexes": []
+  },
+  {
+    "id": 41,
+    "name": "meta_commentary",
+    "category": "communication",
+    "terms": ["you already know this but", "but that's another post", "let me walk you through", "in this section we'll", "as we'll see", "the rest of this essay"],
+    "regexes": ["(?:^|\\s)(?:Hint|Plot twist|Spoiler):"]
+  },
+  {
+    "id": 42,
+    "name": "vague_declarative",
+    "category": "content",
+    "terms": ["the reasons are structural", "the implications are significant", "the stakes are high", "the consequences are real"],
+    "regexes": ["\\bthis is what [a-z]+ actually looks like\\b", "\\bthis is genuinely (?:hard|difficult)\\b"]
+  },
+  {
+    "id": 43,
+    "name": "binary_contrast",
+    "category": "language",
+    "terms": [],
+    "regexes": ["\\b(?:isn'?t|is not) the problem[.,;]\\s+[A-Za-z]+ is\\b", "\\bthe (?:answer|question) (?:isn'?t|is not)\\b[^.?!]{1,40}\\b(?:it'?s|it is)\\b", "\\bstops being\\b[^.?!]{1,30}\\bstarts being\\b"]
+  },
+  {
+    "id": 44,
+    "name": "negative_listing",
+    "category": "language",
+    "terms": [],
+    "regexes": ["\\bnot a [a-z]+[.,]\\s+not a [a-z]+", "\\bit wasn'?t [a-z]+[.,]\\s+it wasn'?t\\b"]
+  },
+  {
+    "id": 45,
+    "name": "rhetorical_setup",
+    "category": "filler",
+    "terms": ["here's what i mean", "think about it", "and that's okay"],
+    "regexes": ["(?:^|[.?!]\\s+)What if [a-z][^.?!]{5,50}\\?"]
   }
 ]

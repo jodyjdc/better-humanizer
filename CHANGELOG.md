@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.1.0 — 2026-06-15
+
+Harvested the curated catalog from "Stop Slop" (Hardik Pandya, MIT, ~10k stars)
+into our measured, register-aware architecture — taking its strength (a rich
+phrase/structure catalog) while rejecting the part our data disproves (register-blind
+blanket bans).
+
+- **8 new tell entries** in `lexicons/ai_tells.json` (ids 38–45): `throat_clearing`,
+  `emphasis_crutch`, `business_jargon` (circle back / double down / lean into),
+  `meta_commentary` (Plot twist / Spoiler / "as we'll see"), `vague_declarative`,
+  `binary_contrast` ("the answer isn't X, it's Y", both contracted and expanded),
+  `negative_listing` ("not a X… not a Y… a Z"), `rhetorical_setup` ("What if…?").
+  False-positive scan: each fires ≤ 6 times across 840 human texts.
+- **Deliberately NOT adopted**: Stop Slop's blanket bans (no em dashes, kill all
+  adverbs, no passive voice, two-items-beat-three). Our 7-register data shows these
+  are register-specific (em-dash 0.00→1.71; passive is human in science; "honestly/
+  literally" are human on Reddit — they're even in the reddit-power-user allow list).
+  A blanket ban is itself an over-correction tell. A test asserts adverbs stay
+  uncatalogued.
+- **Recalibrated** all 7 registers (tell ceilings barely moved — the new patterns are
+  rare in human prose, so calibration absorbs them and they fire on AI overuse).
+  Eval holds with no regression: 25/25.
+- 64 tests. Attribution added to LICENSE (MIT).
+
 ## 1.0.1 — 2026-06-15
 
 Post-1.0 finishing: the persona `lexicon_allow` direction is now functional

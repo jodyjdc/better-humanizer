@@ -24,6 +24,13 @@ SOFTWARE.
 
 Attribution: the AI tell catalog (lexicons/ai_tells.json) is adapted from
 "Wikipedia:Signs of AI writing" (WikiProject AI Cleanup), available under
-CC BY-SA 4.0. Reference corpora are standard public research datasets used to
+CC BY-SA 4.0, and from "Stop Slop" by Hardik Pandya
+(https://github.com/hardikpandya/stop-slop), available under the MIT License —
+its phrase and structural-pattern catalogs (throat-clearing, emphasis crutches,
+business jargon, meta-commentary, binary contrasts, negative listing, rhetorical
+setups) were harvested as register-calibrated tells. NOTE: Stop Slop's register-
+blind blanket bans (no em dashes, no adverbs, no passive voice, no triads) were
+deliberately NOT adopted; this project treats those as register-specific, calibrated
+bands instead. Reference corpora are standard public research datasets used to
 compute aggregate statistics only; see corpus/<register>/PROVENANCE.md. Raw
 corpus texts are not redistributed with this software.

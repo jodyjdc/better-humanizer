@@ -54,7 +54,7 @@
     },
     "tell_rate": {
       "floor": 0.0,
-      "ceiling": 0.7545
+      "ceiling": 0.7643
     },
     "transition_density": {
       "floor": 0.0,
