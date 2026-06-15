@@ -8,9 +8,11 @@ It is the successor to [`blader/humanizer`](https://github.com/blader/humanizer)
 single static prompt that deletes 33 known AI "tells". humanizer-pro keeps that
 pattern knowledge but adds the three things a static checklist can't do.
 
-**Runs on both Claude Code and Codex.** Claude Code loads `SKILL.md` as the
-`/humanizer-pro` skill; Codex enters through `AGENTS.md`. Same loop, same
-deterministic Python scorer — identical results either way.
+**Built for Claude Code, compatible with any file-aware agent.** Claude Code loads
+`SKILL.md` as the `/humanizer-pro` skill (first-class); Codex, Antigravity, OpenCode,
+and other file-aware agents enter through `AGENTS.md`. Same loop, same deterministic
+Python scorer — `scripts/stylo.py` returns identical numbers on every platform, so the
+measurement is reproducible everywhere. Only the model doing the rewriting differs.
 
 ## The core idea
 
