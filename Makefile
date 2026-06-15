@@ -1,4 +1,4 @@
-.PHONY: test benchmark corpus eval all clean
+.PHONY: test benchmark calibrate corpus eval all clean
 
 # Run the test suite (standard library, no pytest needed).
 test:
@@ -8,6 +8,10 @@ test:
 # regression gate: --check exits non-zero if pro stops being the most-human.
 benchmark:
 	python3 eval/benchmark.py --check
+
+# Empirically calibrate the gate threshold (AUC + Youden-optimal cutoff).
+calibrate:
+	python3 eval/calibrate.py
 
 # Fetch the human reference corpora and (re)calibrate the bands for every register.
 corpus:

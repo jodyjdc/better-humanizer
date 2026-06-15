@@ -1,0 +1,58 @@
+name: 'humanize-check'
+description: 'Flag AI-sounding files by measuring their stylometric distance from the real human distribution (humanizer-pro). A calibrated, zero-dependency AI-slop gate for your CI.'
+author: 'jodyjdc'
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  files:
+    description: 'Globs to check (space- or comma-separated), relative to the repo root.'
+    required: false
+    default: '**/*.md'
+  register:
+    description: 'Human register: spontaneous | literary | journalism | scientific | business | social-media | technical-docs.'
+    required: false
+    default: 'spontaneous'
+  max-distance:
+    description: 'Flag files whose distance to the human band exceeds this. Calibrated default 0.6 (AUC 0.94, ~0 false-flags on the eval set).'
+    required: false
+    default: '0.6'
+  expertise:
+    description: 'Optional expertise tier: novice | practitioner | expert.'
+    required: false
+    default: ''
+  persona:
+    description: 'Optional persona name (personas/*.json).'
+    required: false
+    default: ''
+  fail-on-flag:
+    description: 'Fail the job if any file is flagged (true/false).'
+    required: false
+    default: 'true'
+
+outputs:
+  flagged:
+    description: 'Number of files flagged.'
+    value: ${{ steps.run.outputs.flagged }}
+  checked:
+    description: 'Number of files checked.'
+    value: ${{ steps.run.outputs.checked }}
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    - id: run
+      shell: bash
+      # Files are globbed by Python (quoted), so bash never expands them.
+      run: >-
+        python3 "${{ github.action_path }}/scripts/check_files.py"
+        --files "${{ inputs.files }}"
+        --register "${{ inputs.register }}"
+        --max-distance "${{ inputs.max-distance }}"
+        --expertise "${{ inputs.expertise }}"
+        --persona "${{ inputs.persona }}"
+        --fail-on-flag "${{ inputs.fail-on-flag }}"

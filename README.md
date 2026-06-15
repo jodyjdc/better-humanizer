@@ -80,6 +80,37 @@ python3 eval/benchmark.py --check    # regression gate: exit 1 if pro stops winn
 > sat near the band). The semantic half — does it keep meaning and read human? — is the
 > blind judge panel in [`eval/judge_blind.md`](eval/judge_blind.md).
 
+## Use it in CI — the `humanize-check` GitHub Action
+
+Gate AI-slop out of your docs, blog, or release notes the same way you gate failing
+tests. The action scores changed files against the human band and fails the build (or
+just warns) on anything that reads synthetic — zero dependencies, the scorer and
+corpora ship in the action.
+
+```yaml
+# .github/workflows/no-slop.yml
+name: no-slop
+on: [pull_request]
+jobs:
+  humanize-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jodyjdc/better-humanizer@v1.2.0
+        with:
+          files: "docs/**/*.md, README.md"   # comma-separated globs
+          register: spontaneous              # pick the register for your content
+          max-distance: "0.6"                # calibrated default; raise to be lenient
+          fail-on-flag: "true"               # "false" = annotate only, never fail
+```
+
+It writes a per-file verdict table to the PR's job summary and exposes `flagged` /
+`checked` outputs. The default ceiling `0.6` is **calibrated, not guessed**:
+`python3 eval/calibrate.py` measures an **AUC of 0.94** separating raw AI text from
+humanizer-pro output, with ~0 false-flags on the eval set at that cutoff. (Honest
+scope: that separates AI from *humanized* text — the operational question a gate
+answers — not certified human-vs-AI on arbitrary prose.)
+
 ## Aim at a specific writer (optional)
 
 Beyond "the average human in register X", you can target a *specific* writer — all
