@@ -36,8 +36,15 @@ Python subprocess, so the result is identical on both.
 - `text`: the passage to humanize (the SOURCE).
 - `register`: default `spontaneous`. Selects `registers/<register>.md` (the brief)
   and `corpus/<register>/reference-stats.json` (the numeric bands).
-- optional `voice sample`: the user's own writing. If given, run
-  `scripts/build_reference.py` on it first so the human target becomes *them*.
+- optional **target overrides** (pass the matching flag to `scripts/stylo.py`):
+  - `expertise` — `--expertise novice|practitioner|expert` (readability tier within
+    the register; default practitioner = the full register).
+  - `voice sample` — the user's own writing: run `scripts/build_reference.py
+    --voice-sample <dir> --label <name>` first, then score with `--voice <name>` so
+    the human target becomes *them*.
+  - `persona` — `--persona <name>` (e.g. `reddit-power-user`, `seasoned-journalist`,
+    `startup-founder`, `academic-humanist`): a register + tier + lexicon override.
+  - Precedence if several are given: persona > voice > expertise > register.
 
 ## The loop
 

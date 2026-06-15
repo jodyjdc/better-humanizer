@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.0 — 2026-06-15
+
+Sprint 3 of the v2 roadmap — the **persona layer**. The target moves from "the
+average human in a register" to a *specific writer*, still measured on real data.
+This completes the v2 roadmap (structure → registers → persona).
+
+- **Expertise tiers** (`--expertise novice|practitioner|expert`): each register's
+  corpus is split into terciles by **Flesch-Kincaid grade** (a stdlib readability
+  metric — measured, not hand-tuned). `expert` tolerates longer/denser prose,
+  `novice` keeps it simple; `practitioner` is the full register (backward-compatible
+  default). 14 committed tier band-sets.
+- **Voice** (`--voice <label>`): `build_reference.py --voice-sample <dir>` calibrates
+  personal bands from the user's own writing. Samples under ~1500 words are blended
+  with a register fallback (weighted by data) with a warning. Voice data is gitignored.
+- **Named personas** (`--persona <name>`): register + expertise tier + a lexicon
+  allow/deny override. Ships `reddit-power-user`, `seasoned-journalist`,
+  `startup-founder`, `academic-humanist`. Resolution precedence:
+  persona > voice > expertise > register; all flags optional (no flag = v0.3.0).
+- **Proof**: expertise tiers separate cleanly (e.g. scientific FK 5.9–14.2 novice vs
+  17.0–26.1 expert) and discriminate (dense prose closer under expert, simple under
+  novice); a buzzword passage scores 0.811 under bare business vs 1.764 under
+  `--persona startup-founder`. 60 tests via `python3 tests/run.py`.
+
 ## 0.3.0 — 2026-06-15
 
 Sprint 2 of the v2 roadmap: register expansion from 3 to 7.

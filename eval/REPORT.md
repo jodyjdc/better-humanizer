@@ -180,3 +180,51 @@ two registers:
 The bands do the adapting: nothing about the text changed, only the register it is
 judged against. A single-register tool would "fix" the Reddit post into something a
 scientist might write, destroying it.
+
+## Sprint 3: persona layer (voice, expertise, personas)
+
+The target moves from "the average human in register X" to a *specific writer* —
+still measured, never hand-tuned.
+
+### Expertise tiers (measured, not heuristic)
+
+Each register's 120 texts are split into terciles by **Flesch-Kincaid grade** (the
+standard readability index, computed in stdlib). `novice` = the low-FK third,
+`expert` = the high-FK third; `practitioner` is the full register band-set (so the
+default is unchanged). The tiers separate cleanly on real data:
+
+| register | FK novice | FK expert | sentence-len novice→expert | MTLD novice→expert |
+|----------|-----------|-----------|----------------------------|--------------------|
+| scientific | 5.9–14.2 | 17.0–26.1 | 13–24 → 23–38 | 50–93 → 51–119 |
+| journalism | 5.4–10.2 | 11.7–17.1 | 15–21 → 20–27 | 70–136 → 83–143 |
+| social-media | 1.3–7.4 | 9.2–16.4 | 11–19 → 19–32 | 59–116 → 67–124 |
+| literary | 1.1–4.9 | 6.6–11.7 | 8–12 → 13–25 | 68–126 → 67–149 |
+
+**Discrimination (scientific):** an expert-profile passage scores closer-to-human
+under `expert` (0.473) than `novice` (0.522); a simple passage closer under `novice`
+(0.861) than `expert` (0.948). The tier you pick changes what counts as human.
+
+### Voice ("write like me")
+
+`build_reference.py --voice-sample <dir>` calibrates personal bands from the user's
+own texts; `stylo.py --voice <label>` scores against them. Samples under ~1500 words
+are **blended** with a register fallback (weight = words/1500) and a warning is
+printed — noisy bands are never presented as fully calibrated. Voice data is
+gitignored (personal, not committed).
+
+### Personas
+
+`personas/<name>.json` = register + expertise tier + a small lexicon override.
+Demonstration of the override (startup-founder, whose `lexicon_deny` lists the worst
+business buzzwords): a synergy-laden passage scores **0.811** under bare `business`
+but **1.764** under `--persona startup-founder` (deny adds 4 tells) — the persona
+enforces its specific taste. The `lexicon_allow` direction (suppress a catalogued
+tell a persona legitimately uses) is unit-tested in `tests/test_persona.py`.
+
+Four personas ship: `reddit-power-user`, `seasoned-journalist`, `startup-founder`,
+`academic-humanist` — each a real register+tier plus a curated lexicon list.
+
+### The v2 roadmap is complete
+
+Sprint 1 gave the scorer document **structure**; Sprint 2 took it to **seven
+registers**; Sprint 3 lets it imitate a **specific writer**. Tagged **v1.0.0**.

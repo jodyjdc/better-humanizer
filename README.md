@@ -39,11 +39,31 @@ A loop generates several candidate rewrites, scores them, vetoes any that lose
 meaning or fall outside the human band, keeps the best, and iterates on the judges'
 critique. That feedback loop is the "self-improvement".
 
+## Aim at a specific writer (optional)
+
+Beyond "the average human in register X", you can target a *specific* writer — all
+optional, all measured:
+
+- **Expertise** — `--expertise novice|practitioner|expert`. Each register is split
+  into readability terciles (Flesch-Kincaid grade); `expert` tolerates longer,
+  denser prose, `novice` keeps it simple. Default `practitioner` = the full register
+  (unchanged).
+- **Voice** — calibrate your own bands from your writing and target *you*:
+  `python3 scripts/build_reference.py --voice-sample mydir/ --label me`, then
+  `python3 scripts/stylo.py text.txt --voice me`.
+- **Personas** — `--persona reddit-power-user` (or `seasoned-journalist`,
+  `startup-founder`, `academic-humanist`): a register + expertise tier + a curated
+  lexicon of what to allow or forbid for that voice.
+
 ## Run it
 
 ```bash
 # Score any text against the human band for a register:
 python3 scripts/stylo.py path/to/text.txt --register spontaneous
+
+# Or target an expertise level / persona / your own voice:
+python3 scripts/stylo.py path/to/text.txt --register scientific --expertise expert
+python3 scripts/stylo.py path/to/text.txt --persona reddit-power-user
 
 # (Re)calibrate the human bands. The shipped reference-stats.json is already
 # calibrated from 120 real human texts; rebuild or extend it with:

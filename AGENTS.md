@@ -40,6 +40,11 @@ The scorer is standard-library Python, zero dependencies:
 python3 scripts/stylo.py <candidate-file> --register <register>
 ```
 
+Optional target overrides (one writer instead of the register average):
+`--expertise novice|practitioner|expert`, `--persona <name>` (personas/), or
+`--voice <label>` (a voice calibrated via `build_reference.py --voice-sample`).
+Precedence: persona > voice > expertise > register.
+
 It prints JSON: `stylo_distance` (lower = closer to the human band), `self_tell_flags`
 (over-correction — scrubbing a text flat is itself a tell), `stylo_outlier` (hard veto),
 and per-feature `features` (including the discourse features `transition_density`,
