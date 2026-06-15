@@ -2,6 +2,6 @@
   "name": "startup-founder",
   "register": "business",
   "expertise": "practitioner",
-  "lexicon_allow": ["mission", "vision"],
+  "lexicon_allow": ["mission", "vision", "in order to", "let me know if"],
   "lexicon_deny": ["synergy", "best-in-class", "circle back", "low-hanging fruit"]
 }

@@ -44,3 +44,16 @@ def test_resolve_target_plain_register():
     ref, register, allow, deny = stylo._resolve_target(register="literary")
     assert register == "literary" and allow == set() and deny == []
     assert ref["bands"] == stylo.load_reference("literary")["bands"]
+
+
+def test_shipped_persona_allow_works_end_to_end():
+    # startup-founder allows genuine business phrases the generic catalog flags
+    # ("in order to", "let me know if" — both present in the real Enron corpus).
+    # A founder email using them must score better under the persona than bare.
+    txt = ("Quick update on the rollout. In order to hit the deadline, the team "
+           "shipped the core flow this week. Let me know if you want a walkthrough.")
+    bare = stylo.score(txt, "business")
+    ref, reg, allow, deny = stylo._resolve_target(persona="startup-founder")
+    pers = stylo.score(txt, reg, ref=ref, allow=allow, deny=deny)
+    assert sum(pers["tells"].values()) < sum(bare["tells"].values())
+    assert pers["stylo_distance"] < bare["stylo_distance"]

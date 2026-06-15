@@ -138,8 +138,12 @@ single field, and `fetch_corpus.clean()` collapses whitespace, so no corpus pres
 blank-line paragraph breaks — calibration yields a `0.0` floor and the feature never
 penalizes (even journalism, expected to be multi-paragraph, flattens this way). It is
 wired and tested, and works on real multi-paragraph *input* the user supplies; making
-it live in *calibration* needs a paragraph-preserving fetch/clean path, deferred as
-its own change. Flagged here rather than left as a silent no-op.
+it live in *calibration* is **data-blocked, not code-blocked**: a probe of the source
+datasets found zero paragraph breaks in 6 of 7 (CNN/DailyMail, Reddit-TLDR, arXiv,
+WritingPrompts all deliver single-block text; only Stack Exchange answers carry real
+paragraphs). So calibrated paragraph bands can't be derived from these corpora
+regardless of how `clean()` treats newlines. Flagged here rather than left as a silent
+no-op.
 
 ## Sprint 2: +4 registers (business, journalism, social-media, technical-docs)
 
@@ -214,12 +218,17 @@ gitignored (personal, not committed).
 
 ### Personas
 
-`personas/<name>.json` = register + expertise tier + a small lexicon override.
-Demonstration of the override (startup-founder, whose `lexicon_deny` lists the worst
-business buzzwords): a synergy-laden passage scores **0.811** under bare `business`
-but **1.764** under `--persona startup-founder` (deny adds 4 tells) — the persona
-enforces its specific taste. The `lexicon_allow` direction (suppress a catalogued
-tell a persona legitimately uses) is unit-tested in `tests/test_persona.py`.
+`personas/<name>.json` = register + expertise tier + a small lexicon override, both
+directions data-grounded:
+
+- **deny** (enforce a persona's taste): a synergy-laden passage scores **0.811**
+  under bare `business` but **1.764** under `--persona startup-founder` (its
+  `lexicon_deny` adds 4 buzzword tells).
+- **allow** (protect a voice's legitimate phrasing): `startup-founder` allows
+  "in order to" and "let me know if" — both verified present in the real Enron
+  business corpus. A founder email using them scores **0.718** under bare `business`
+  (2 tells) but **0.393** under `--persona startup-founder` (0 tells), because the
+  persona stops penalizing phrases real business writers actually use.
 
 Four personas ship: `reddit-power-user`, `seasoned-journalist`, `startup-founder`,
 `academic-humanist` — each a real register+tier plus a curated lexicon list.

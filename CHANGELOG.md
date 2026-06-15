@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.1 — 2026-06-15
+
+Post-1.0 finishing: the persona `lexicon_allow` direction is now functional
+end-to-end (it was unit-tested but no shipped persona exercised it), and a known
+limitation is resolved as data-blocked.
+
+- **Persona allow, data-grounded:** `startup-founder` now allows "in order to" and
+  "let me know if" — both verified present in the real Enron business corpus. A
+  founder email using them scores 0.718 under bare `business` (2 tells) vs 0.393
+  under `--persona startup-founder` (0 tells). The persona stops penalizing phrasing
+  real business writers actually use.
+- **paragraph_cv resolved as data-blocked:** a probe found zero paragraph breaks in
+  6 of 7 source datasets (only Stack Exchange answers carry real paragraphs), so
+  calibrated paragraph bands can't be derived from these corpora — a data limit, not
+  a code gap. Documented in `eval/REPORT.md`.
+
 ## 1.0.0 — 2026-06-15
 
 Sprint 3 of the v2 roadmap — the **persona layer**. The target moves from "the
